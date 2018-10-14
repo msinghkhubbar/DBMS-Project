@@ -3,14 +3,15 @@ import time
 import datetime
 import random
 
-conn = sqlite3.connect('mydatabase.db') #create the db
-c = conn.cursor()  #set the cursor for the dataset traversal
+#conn = sqlite3.connect('mydatabase.db') #create the db
+#c = conn.cursor()  #set the cursor for the dataset traversal
 
 def connect():
 	conn = sqlite3.connect('mydatabase.db') #create the db
 	c = conn.cursor()  #set the cursor for the dataset traversal
 	return conn,c
 
+conn,c = connect()
 #=================================================================================================================================
 #create tables	
 
