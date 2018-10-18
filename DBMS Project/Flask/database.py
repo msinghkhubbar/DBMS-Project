@@ -87,12 +87,10 @@ def select_all_shows():   #selects info of all shows
 #maybe we will have to write separate functions based on combinations  
 #and then write a separate function that calls the suitable one   
 
-def select_movies_all_cri(imdb_rating= null, actor = null, director = null, release_year = null, genre = null) :
+def select_movies_all_cri(actor = null, director = null, release_year = null, genre = null) :
 #this one is for the case where all search criteria are applied  
 	conn, c = connect()
 	que = 'select * from movies where '
-	if imdb_rating!= 0:
-		que += f"imdb_rating >= '{imdb_rating}'"
 	if genre!= 0:
 		que += f"and genre = '{genre}'"
 	if director!= 0:
@@ -101,6 +99,7 @@ def select_movies_all_cri(imdb_rating= null, actor = null, director = null, rele
 		que += f"and release_year = '{release_year}'"
 	if actor!=0:
 		que += f"and cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+	que += f"order by imdb_rating"
 	que += ';'
 	c.execute(que)
 	data = c.fetchall()
@@ -116,18 +115,17 @@ def select_movies_all_cri(imdb_rating= null, actor = null, director = null, rele
 #show selection queries
 #same doubt as movies
 
-def select_shows_all_cri(imdb_rating= null, genre = null, actor = null, director = null) :
+def select_shows_all_cri(genre = null, actor = null, director = null) :
 #this one is for the case where all search criteria are applied  
 	conn, c = connect()
 	que = 'select * from movies where '
-	if imdb_rating!= 0:
-		que += f"imdb_rating >= '{imdb_rating}'"
 	if genre!= 0:
 		que += f"and genre = '{genre}'"
 	if director!= 0:
 		que += f"and director = '{director}'"
 	if actor!=0:
 		que += f"and cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+	que += f"order by imdb_rating"
 	que += ';'
 	c.execute(que)
 	data = c.fetchall()
