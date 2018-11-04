@@ -2,6 +2,8 @@ import sqlite3
 import time
 import datetime
 import random
+import os
+from flask_bcrypt import generate_password_hash, check_password_hash
 
 #conn = sqlite3.connect('mydatabase.db') #create the db
 #c = conn.cursor()  #set the cursor for the dataset traversal
@@ -16,37 +18,35 @@ def connect():
 #create tables	
 
 def create_table_accounts():
-	c.execute('CREATE TABLE IF NOT EXISTS accounts(id varchar(12), username varchar(50) not null,first_name varchar(20) not null,last_name varchar(20) not null,email_id varchar(320) not null,password varchar(32) not null,primary key(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS accounts(username varchar(50) not null, first_name varchar(20) not null, last_name varchar(20) not null,email_id varchar(320),password varchar(32) not null,login_status boolean,primary key(username,email_id))')
 
 def create_table_movies():
-	c.execute('CREATE TABLE IF NOT EXISTS movies(id varchar(12), name varchar(50) not null,nickname varchar(10),genre varchar(15) not null,imdb_rating decimal(2,2) not null,cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,release_year int(4)not null,duration_minutes int(4) not null,primary key(id,name))')
+	c.execute('CREATE TABLE IF NOT EXISTS movies(id varchar(12), name varchar(50) not null, nickname varchar(10),service varchar(15), genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,release_year int(4) not null,duration_minutes int(4) not null,primary key(id,name))')
 
 def create_table_shows():
-	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null,nickname varchar(10),genre varchar(15) not null,imdb_rating decimal(2,2) not null,cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,start_year int(4)not null,end_year varchar(8) not null,seasons int(3) not null,primary key(id,name))')
+	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null, nickname varchar(10), service varchar(15), genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,start_year int(4) not null,end_year varchar(8) not null,seasons int(3) not null,primary key(id,name))')
 
 def create_table_watchlist():
-	c.execute('CREATE TABLE IF NOT EXISTS watchlist(id varchar(12) primary key,user_id varchar(12) ,movie_id varchar(12),show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS watchlist(id varchar(12) primary key, user_id varchar(12), movie_id varchar(12), show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
 
 def create_table_feedback():
-	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12),show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12),show_id varchar(12),FOREIGN KEY(user_id) REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
+
+def create_table_streams():
+	c.execute('CREATE TABLE IF NOT EXISTS streams(stream_id varchar(12) primary key,user_id varchar(12),movie_id varchar(12),show_id varchar(12),foreign key(user_id) references accounts(username),foreign key(movie_id) references movies(id),foreign key(show_id) references shows(id))')
+
 
 #======================================================================================================================================
 #insert_queries
 
-def insert_account(id1 = 'null',username1  = 'null', first_name1 = 'null', last_name1 = 'null', email_id1 = 'null', password1 = 'null'):
+def registration(username = 'null', first_name = 'null', last_name = 'null', email_id = 'null', password = 'null', login_status = 'null'):
 	conn, c = connect()
-	c.execute('insert into accounts values (?, ?, ?, ?, ?, ?)', [id1, username1, first_name1, last_name1, email_id1, password1])
+	password = generate_password_hash(password)
+	password = str(password,"utf-8")
+	c.execute('insert into accounts values (?, ?, ?, ?, ?, ?, ?)', [username, first_name, last_name, email_id, password, login_status])
 	conn.commit()
 	conn.close()
 	select_accounts()
-
-
-
-
-
-
-
-
 
 #======================================================================================================================================
 #select_all queries
@@ -87,20 +87,36 @@ def select_all_shows():   #selects info of all shows
 #maybe we will have to write separate functions based on combinations  
 #and then write a separate function that calls the suitable one   
 
-def select_movies_all_cri(actor = null, director = null, release_year = null, genre = null) :
+def select_movies_all_cri(genre = 'null', director = 'null', actor = 'null', year = 'null') :
 #this one is for the case where all search criteria are applied  
 	conn, c = connect()
-	que = 'select * from movies where '
-	if genre!= 0:
-		que += f"and genre = '{genre}'"
-	if director!= 0:
-		que += f"and director = '{director}'"
-	if release_year!=0:
-		que += f"and release_year = '{release_year}'"
-	if actor!=0:
-		que += f"and cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
-	que += f"order by imdb_rating"
+
+
+	if genre == 'null' and actor == 'null' and director == 'null':
+		que = "select * from movies"
+
+
+	else:
+		que = 'select * from movies where '
+		if genre!= 0:
+			que += f"genre = '{genre}'"
+			que += " and "
+		if director!= 0:
+			que += f"director = '{director}'"
+			que += " and "
+		if actor!=0:
+			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+			que+=" and "
+		if year!=0:
+			que += f"release_year = '{year}'"
+
+
+	if que.split()[-1] == "and":
+   		que = que[0:-5]		
+
+	que += f" order by imdb_rating"
 	que += ';'
+
 	c.execute(que)
 	data = c.fetchall()
 	conn.close()
@@ -108,25 +124,71 @@ def select_movies_all_cri(actor = null, director = null, release_year = null, ge
 		print(i)
 	return data
 
+def select_service_movies(service = 'null'):
+	conn, c = connect()
 
+	if service = 'null':
+		que = "select * from movies;"
 
+	else:
+		que = "select * from movies where service = '{service}' order by imdb_rating;"
 
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	for i in data:
+		print(i)
+	return data	
+
+def select_service_shows(service = 'null'):
+	conn, c = connect()
+
+	if service = 'null':
+		que = "select * from shows;"
+
+	else:
+		que = "select * from shows where service = '{service}' order by imdb_rating; "
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	for i in data:
+		print(i)
+	return data	
 #=====================================================================================================================================
 #show selection queries
 #same doubt as movies
 
-def select_shows_all_cri(genre = null, actor = null, director = null) :
+def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year = 'null') :
 #this one is for the case where all search criteria are applied  
 	conn, c = connect()
-	que = 'select * from movies where '
-	if genre!= 0:
-		que += f"and genre = '{genre}'"
-	if director!= 0:
-		que += f"and director = '{director}'"
-	if actor!=0:
-		que += f"and cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
-	que += f"order by imdb_rating"
+
+
+	if genre == 'null' and actor == 'null' and director == 'null':
+		que = "select * from shows"
+
+
+	else:
+		que = 'select * from shows where '
+		if genre!= 0:
+			que += f"genre = '{genre}'"
+			que += " and "
+		if director!= 0:
+			que += f"director = '{director}'"
+			que += " and "
+		if actor!=0:
+			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+			que+=" and "
+		if year!=0:
+			que += f"'{year}' between start_year and end_year"
+
+
+	if que.split()[-1] == "and":
+   		que = que[0:-5]		
+
+	que += f" order by imdb_rating"
 	que += ';'
+
 	c.execute(que)
 	data = c.fetchall()
 	conn.close()
@@ -135,7 +197,18 @@ def select_shows_all_cri(genre = null, actor = null, director = null) :
 	return data
 
 
+
 #==============================================================================================================
+#Search By Name
+def select_show_name(name):
+	que = f"select * from shows where name = '{name}' order by imdb_rating;"
+
+
+def select_movie_name(name):
+	que = f"select * from movies where name = '{name}' order by imdb_rating;"
+
+
+#=============================================================================================================
 # table creation functions
 
 
@@ -146,7 +219,16 @@ def select_shows_all_cri(genre = null, actor = null, director = null) :
 #create_table_watchlist()
 #create_table_feedback()
 
+#=============================================================================================================
+#triggers
 
+delimiter $$
+create trigger show_watchlist()
+#===========================================================================================================
+#views
+
+
+#===========================================================================================================
 conn.commit() #commit the current transaction		
 c.close()   #close the cursor
 conn.close()    #close the connection
