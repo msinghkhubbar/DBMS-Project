@@ -4,31 +4,38 @@
 
 {% block content %}
 	<div class="container">
-		<form class="form">
+		<form class="form" action="/hotstar" method="POST">
+			<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Show Name</label>
+			<input class="form-control form-control-lg" type="text" placeholder="Name" required name="name">
+			<button type="submit" class="btn btn-primary my-1">Submit</button>
+		</form>
+		<hr>
+		
+		<form class="form" action="/hotstar" method="POST">
 			<div class="form-group mx-sm-3 mb-2">
 				<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Actor</label>
-			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" style="margin-right: 85px">
+			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="actor" style="margin-right: 85px">
 			    	<option selected>Choose...</option>
 			   		<option value="1">One</option>
 			    	<option value="2">Two</option>
 			    	<option value="3">Three</option>
 			  	</select>
 			  	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Director</label>
-			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref"  style="margin-right:85px">
+			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="director"  style="margin-right:85px">
 			    	<option selected>Choose...</option>
 			   		<option value="1">One</option>
 			    	<option value="2">Two</option>
 			    	<option value="3">Three</option>
 			  	</select>
 			  	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Genre</label>
-			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" style="margin-right: 85px">
+			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="genre" style="margin-right: 85px">
 			    	<option selected>Choose...</option>
 			   		<option value="1">One</option>
 			    	<option value="2">Two</option>
 			    	<option value="3">Three</option>
 			  	</select>
 			  	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Year</label>
-			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" style="margin-right: 85px">
+			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="year" style="margin-right: 85px">
 			    	<option selected>Choose...</option>
 			   		<option value="1">2018</option>
 			    	<option value="2">2017</option>
