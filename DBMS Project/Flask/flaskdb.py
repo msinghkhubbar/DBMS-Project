@@ -9,16 +9,21 @@ app.config['SECRET_KEY'] = '0f2f57c293cf38d00e0d55b510360807'
 #===================================================================================================================================
 #functions to take inputs
 
-def search_intake_service():
-	# print(service)
-	Actor = request.form['actor']
-	Director = request.form['director']
-	Genre = request.form['genre']
-	Year = request.form['year']
-	details = (Genre,Director,Actor,Year)
-	# details = (request.form['genre'],request.form['director'],request.form['actor'], request.form['year'])
-	# return (request.form['genre'],request.form['director'],request.form['actor'], request.form['year'])
-	return details
+# def search_intake_service():
+# 	details = []
+# 	Genre = request.form['genre']
+# 	details.append(Genre)
+# 	Director = request.form['director']
+# 	details.append(Director)
+# 	Actor = request.form['actor']
+# 	details.append(Actor)
+# 	Year = request.form['year']
+# 	details.append(Year)
+
+# 	#details = (Genre,Director,Actor,Year)
+# 	# details = (request.form['genre'],request.form['director'],request.form['actor'], request.form['year'])
+# 	# return (request.form['genre'],request.form['director'],request.form['actor'], request.form['year'])
+# 	return details
 	
 
 # def search_intake(service = 'null'):
@@ -28,9 +33,9 @@ def search_intake_service():
 # 	Year = request.form['year']
 	
 
-def search_intake_name():
-	Name = request_form['name']	
-	return Name
+# def search_intake_name():
+# 	Name = request_form['name']	
+# 	return Name
 #=====================================================================================================================================
 
 @app.route("/")
@@ -43,16 +48,29 @@ def home():
 
 @app.route("/netflix")
 def netflix():
-	details = ()
+	details = []
+	data1 = ()
+	data2 = ()
 	if(request.method == 'POST'):
-		details = search_intake_service()
-	# print('Movies')
-	select_shows_all_cri(details[0],details[1],details[2],details[3])
-	# (request.form['genre'],request.form['director'],request.form['actor'], request.form['year'])
-	# print('Shows')
-	select_movies_all_cri(details[0],details[1],details[2],details[3])
+		Genre1 = request.form['genre']
+		Director1 = request.form['director']
+		Actor1 = request.form['actor']
+		Year1 = request.form['year']
 
-	return render_template('netflix.html')
+		Genre = str(Genre1)
+		Director =str(Director1) 
+		Actor = str(Actor1)
+		Year = str(Year1)
+
+			# details = search_intake_service()
+		print('Movies\n')
+		# data2 = select_shows_all_cri(details[0],details[1],details[2],details[3])
+		data2 = select_movies_all_cri(Genre,Director,Actor,Year)
+		print('Shows')
+		# data1 = select_movies_all_cri(details[0],details[1],details[2],details[3])
+		data1 = select_shows_all_cri(Genre,Director,Actor,Year)
+
+	return render_template('netflix.html',data1 = data1, data2 = data2)	
 
 
 @app.route("/netflixname")
@@ -61,25 +79,39 @@ def netflix_name():
 	if(request.method == 'POST'):
 		Name = search_intake_name()
 	print('Movies\n')
-	select_movie_name(Name)
+	Name1 = select_movie_name(Name)
 	print('Shows')
-	select_show_name(Name)
+	Name2 = select_show_name(Name)
 	
-	return render_template('netflix.html')	
+	return render_template('netflixname.html', Name1 = Name1, Name2 = Name2 )	
 
 #======================================================================================================	
 
 @app.route("/amazon")
 def amazon():
-	details = ()
+	details = []
+	data1 = ()
+	data2 = ()
 	if(request.method == 'POST'):
-		details = search_intake_service()
-	print('Movies\n')
-	select_shows_all_cri(details[0],details[1],details[2],details[3])
-	print('Shows')
-	select_movies_all_cri(details[0],details[1],details[2],details[3])
+		Genre1 = request.form['genre']
+		Director1 = request.form['director']
+		Actor1 = request.form['actor']
+		Year1 = request.form['year']
 
-	return render_template('amazon.html')
+		Genre = str(Genre1)
+		Director =str(Director1) 
+		Actor = str(Actor1)
+		Year = str(Year1)
+
+			# details = search_intake_service()
+		print('Movies\n')
+		# data2 = select_shows_all_cri(details[0],details[1],details[2],details[3])
+		data2 = select_movies_all_cri(Genre,Director,Actor,Year)
+		print('Shows')
+		# data1 = select_movies_all_cri(details[0],details[1],details[2],details[3])
+		data1 = select_shows_all_cri(Genre,Director,Actor,Year)
+
+	return render_template('amazon.html',data1 = data1, data2 = data2)
 
 
 
@@ -93,20 +125,35 @@ def amazon_name():
 	print('Shows')
 	select_show_name(Name)
 	
-	return render_template('amazon.html')	
+	return render_template('amazonname.html', Name1 = Name1, Name2 = Name2 )	
 
 
 #=======================================================================================================
 
 @app.route("/hotstar")
 def hotstar():
-	details = ()
+	details = []
+	data1 = ()
+	data2 = ()
 	if(request.method == 'POST'):
-		details = search_intake_service()
-	# print('Movies')
-	data2 = select_shows_all_cri(details[0],details[1],details[2],details[3])
-	# print('Shows')
-	data1 = select_movies_all_cri(details[0],details[1],details[2],details[3])
+		Genre1 = request.form['genre']
+		Director1 = request.form['director']
+		Actor1 = request.form['actor']
+		Year1 = request.form['year']
+
+		Genre = str(Genre1)
+		Director =str(Director1) 
+		Actor = str(Actor1)
+		Year = str(Year1)
+
+			# details = search_intake_service()
+		print('Movies\n')
+		# data2 = select_shows_all_cri(details[0],details[1],details[2],details[3])
+		data2 = select_movies_all_cri(Genre,Director,Actor,Year)
+		print('Shows')
+		# data1 = select_movies_all_cri(details[0],details[1],details[2],details[3])
+		data1 = select_shows_all_cri(Genre,Director,Actor,Year)
+
 	
 	return render_template('hotstar.html',data1 = data1, data2 = data2)
 
@@ -121,7 +168,7 @@ def hotstar_name():
 	print('Shows')
 	select_show_name(Name)
 	
-	return render_template('hotstarname.html')	
+	return render_template('hotstarname.html', Name1 = Name1, Name2 = Name2 )	
 
 
 #=========================================================================================================	
