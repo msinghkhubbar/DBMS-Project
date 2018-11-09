@@ -62,6 +62,58 @@
 		  	</div>
 		</form>	
 	</div>
+	<div>
+		<h1>MOVIES</h1>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Genre</th>
+				<th>Director</th>
+				<th>IMDb</th>
+				<th>Cast 1</th>
+				<th>Cast 2</th>
+				<th>Release Year</th>
+			</tr>
+			{% for item in data1 %}
+				<tr>
+					<td>{{ item[1] }}</td>
+					<td>{{ item[4] }}</td>
+					<td>{{ item[13] }}</td>
+					<td>{{ item[5] }}</td>
+					<td>{{ item[7] }}</td>
+					<td>{{ item[8] }}</td>
+					<td>{{ item[14] }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+	<div>
+		<h1>SHOWS/h1>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Genre</th>
+				<th>Director</th>
+				<th>IMDb</th>
+				<th>Cast 1</th>
+				<th>Cast 2</th>
+				<th>Release Year</th>
+				<th>Seasons</th>
+			</tr>
+			{% for item in data2 %}
+				<tr>
+					<td>{{ item[1] }}</td>
+					<td>{{ item[4] }}</td>
+					<td>{{ item[13] }}</td>
+					<td>{{ item[5] }}</td>
+					<td>{{ item[7] }}</td>
+					<td>{{ item[8] }}</td>
+					<td>{{ item[14] }}</td>
+					<td>{{ item[16] }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
 {% endblock content %}
 
 
