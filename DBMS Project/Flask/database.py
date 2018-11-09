@@ -8,8 +8,11 @@ from flask_bcrypt import generate_password_hash, check_password_hash
 #conn = sqlite3.connect('mydatabase.db') #create the db
 #c = conn.cursor()  #set the cursor for the dataset traversal
 
+conn = sqlite3.connect('mydatabase.db')  #connect to the database 
+c = conn.cursor() 
+
 def connect():
-	conn = sqlite3.connect('mydatabase.db') #create the db
+	conn = sqlite3.connect('mydatabase.db')  #connect to the database 
 	c = conn.cursor()  #set the cursor for the dataset traversal
 	return conn,c
 
@@ -46,7 +49,19 @@ def registration(username = 'null', first_name = 'null', last_name = 'null', ema
 	c.execute('insert into accounts values (?, ?, ?, ?, ?, ?, ?)', [username, first_name, last_name, email_id, password, login_status])
 	conn.commit()
 	conn.close()
-	select_accounts()
+
+def insert_movies(id1 = 'null', name = 'null', nickname = 'null', service = 'null', genre = 'null',imdb_rating = 'null',user_rating = 'null',cast_1 = 'null' ,cast_2 = 'null',cast_3 = 'null',cast_4 = 'null',cast_5 = 'null',cast_6 = 'null',director = 'null',release_year = 'null',duration_minutes = 'null'):
+	conn, c = connect()
+	c.execute('insert into movies values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )', [id1 , name , nickname , genre , service ,imdb_rating ,user_rating ,cast_1  ,cast_2 ,cast_3 ,cast_4 ,cast_5 ,cast_6 ,director ,release_year ,duration_minutes ])
+	conn.commit()
+	conn.close()
+	
+def insert_shows(id1 = 'null', name = 'null', nickname = 'null', service = 'null', genre = 'null',imdb_rating = 'null',user_rating = 'null',cast_1 = 'null' ,cast_2 = 'null',cast_3 = 'null',cast_4 = 'null',cast_5 = 'null',cast_6 = 'null',director = 'null',start_year = 'null', end_year = 'null',seasons = 'null'):
+	conn, c = connect()
+	c.execute('insert into shows values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )', [id1 , name , nickname , genre , service ,imdb_rating ,user_rating ,cast_1  ,cast_2 ,cast_3 ,cast_4 ,cast_5 ,cast_6 ,director ,start_year, end_year ,seasons ])
+	conn.commit()
+	conn.close()
+	
 
 #======================================================================================================================================
 #select_all queries
@@ -56,26 +71,26 @@ def select_all_accounts():        #selects info of all accounts
 	c.execute("select * from accounts")
 	data = c.fetchall()
 	conn.close()
-	for i in data:
-		print(i)
+	# for i in data:
+	# 	print(i)
 	return data
 
 def select_all_movies():       #selects info of all movies
 	conn, c = connect()
-	c.execute("select * from movies")
+	c.execute("select * from movies order by imdb_rating ;")
 	data = c.fetchall()
 	conn.close()
-	for i in data:
-		print(i)
+	# for i in data:
+	# 	print(i)
 	return data
 
 def select_all_shows():   #selects info of all shows
 	conn, c = connect()
-	c.execute("select * from shows")
+	c.execute("select * from shows order by imdb_rating ;")
 	data = c.fetchall()
 	conn.close()
-	for i in data:
-		print(i)
+	# for i in data:
+	# 	print(i)
 	return data
 
 
@@ -112,22 +127,22 @@ def select_movies_all_cri(genre = 'null', director = 'null', actor = 'null', yea
 
 
 	if que.split()[-1] == "and":
-   		que = que[0:-5]		
+		que = que[0:-5]		
 
 	que += f" order by imdb_rating"
-	que += ';'
+	que += ' ;'
 
 	c.execute(que)
 	data = c.fetchall()
 	conn.close()
-	for i in data:
-		print(i)
+	#for i in data:
+	#	print(i)
 	return data
 
 def select_service_movies(service = 'null'):
 	conn, c = connect()
 
-	if service = 'null':
+	if service == 'null':
 		que = "select * from movies;"
 
 	else:
@@ -136,14 +151,14 @@ def select_service_movies(service = 'null'):
 	c.execute(que)
 	data = c.fetchall()
 	conn.close()
-	for i in data:
-		print(i)
+	#for i in data:
+	#	print(i)
 	return data	
 
 def select_service_shows(service = 'null'):
 	conn, c = connect()
 
-	if service = 'null':
+	if service == 'null':
 		que = "select * from shows;"
 
 	else:
@@ -152,8 +167,8 @@ def select_service_shows(service = 'null'):
 	c.execute(que)
 	data = c.fetchall()
 	conn.close()
-	for i in data:
-		print(i)
+	# for i in data:
+	# 	print(i)
 	return data	
 #=====================================================================================================================================
 #show selection queries
@@ -184,7 +199,7 @@ def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year
 
 
 	if que.split()[-1] == "and":
-   		que = que[0:-5]		
+		que = que[0:-5]		
 
 	que += f" order by imdb_rating"
 	que += ';'
@@ -192,8 +207,8 @@ def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year
 	c.execute(que)
 	data = c.fetchall()
 	conn.close()
-	for i in data:
-		print(i)
+	# for i in data:
+	# 	print(i)
 	return data
 
 
@@ -201,34 +216,54 @@ def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year
 #==============================================================================================================
 #Search By Name
 def select_show_name(name):
+	conn, c = connect()
 	que = f"select * from shows where name = '{name}' order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	# for i in data:
+	# 	print(i)
+	return data
+
 
 
 def select_movie_name(name):
+	conn, c = connect()
 	que = f"select * from movies where name = '{name}' order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	# for i in data:
+	# 	print(i)
+	return data
+
 
 
 #=============================================================================================================
 # table creation functions
 
 
-#conn,c = connect()
-#create_table_accounts()
-#create_table_movies()
-#create_table_shows()
-#create_table_watchlist()
-#create_table_feedback()
-
+conn,c = connect()
+create_table_accounts()
+create_table_movies()
+create_table_shows()
+create_table_watchlist()
+create_table_feedback()
 #=============================================================================================================
 #triggers
 
-delimiter $$
-create trigger show_watchlist()
+
 #===========================================================================================================
 #views
+
+
+#=============================================================================================================
 
 
 #===========================================================================================================
 conn.commit() #commit the current transaction		
 c.close()   #close the cursor
 conn.close()    #close the connection
+#==============================================================================================================
