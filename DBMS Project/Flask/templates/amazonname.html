@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+
+
+{% block content %}
+
+	<form class="form" action = "/amazonname" method ='POST'>
+		<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Show Name</label>
+		<input class="form-control form-control-lg" type="text" placeholder="Name" required name="name">
+		<button type="submit" class="btn btn-primary my-1">Submit</button>
+	</form>
+
+
+	<div>
+		<h1>MOVIES</h1>
+		<table>
+			{% for item in Name1 %}
+				<tr>
+					<td>{{ item[1] }}</td>
+					<td>{{ item[4] }}</td>
+					<td>{{ item[13] }}</td>
+					<td>{{ item[5] }}</td>
+					<td>{{ item[7] }}</td>
+					<td>{{ item[8] }}</td>
+					<td>{{ item[14] }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+	<div>
+		<h1>SHOWS</h1>
+		<table>
+			{% for item in Name2 %}
+				<tr>
+					<td>{{ item[1] }}</td>
+					<td>{{ item[4] }}</td>
+					<td>{{ item[13] }}</td>
+					<td>{{ item[5] }}</td>
+					<td>{{ item[7] }}</td>
+					<td>{{ item[8] }}</td>
+					<td>{{ item[14] }}</td>
+					<td>{{ item[16] }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+
+
+
+
+
+{% endblock content %}
+

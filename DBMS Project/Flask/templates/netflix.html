@@ -4,12 +4,7 @@
 
 {% block content %}
 	<div class="container">
-		<form class="form" action="/netflix" method="POST">
-			<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Show Name</label>
-			<input class="form-control form-control-lg" type="text" placeholder="Name" required name="name">
-			<button type="submit" class="btn btn-primary my-1">Submit</button>
-		</form>
-		<hr>
+		<a href="{{ url_for('netflix_name') }}">Search by name</a>
 		<form class="form" action="/netflix" method="POST">
 			<div class="form-group mx-sm-3 mb-2">
 				<label class="my-1 mr-2" for="inlineFormCustomSelectPref" >Actor</label>
@@ -65,7 +60,7 @@
 		</table>
 	</div>
 	<div>
-		<h1>SHOWS/h1>
+		<h1>SHOWS</h1>
 		<table>
 			<tr>
 				<th>Name</th>
