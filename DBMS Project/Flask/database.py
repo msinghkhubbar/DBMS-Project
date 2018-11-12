@@ -19,18 +19,17 @@ def connect():
 #conn,c = connect()
 #=================================================================================================================================
 #create tables	
-
 def create_table_accounts():
-	c.execute('CREATE TABLE IF NOT EXISTS accounts(username varchar(50) not null, first_name varchar(20) not null, last_name varchar(20) not null,email_id varchar(320),password varchar(32) not null,login_status boolean,primary key(username,email_id))')
+	c.execute('CREATE TABLE IF NOT EXISTS accounts(first_name varchar(20) not null, last_name varchar(20) not null,email_id varchar(320) not null,password varchar(32) not null,login_status boolean not null,primary key(email_id))')
 
 def create_table_movies():
-	c.execute('CREATE TABLE IF NOT EXISTS movies(id varchar(12), name varchar(50) not null, nickname varchar(10),service varchar(15), genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,release_year int(4) not null,duration_minutes int(4) not null,primary key(id,name))')
+	c.execute('CREATE TABLE IF NOT EXISTS movies(id varchar(12), name varchar(50) not null, nickname varchar(10),service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,release_year int(4) not null,duration_minutes int(4) not null,primary key(id))')
 
 def create_table_shows():
-	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null, nickname varchar(10), service varchar(15), genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,start_year int(4) not null,end_year varchar(8) not null,seasons int(3) not null,primary key(id,name))')
+	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null, nickname varchar(10), service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,start_year int(4) not null,end_year varchar(8) not null,seasons int(3) not null,primary key(id))')
 
 def create_table_watchlist():
-	c.execute('CREATE TABLE IF NOT EXISTS watchlist(id varchar(12) primary key, user_id varchar(12), movie_id varchar(12), show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS watchlist(id varchar(12) primary key, user_id varchar(12) not null, movie_id varchar(12), show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
 
 def create_table_feedback():
 	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12),show_id varchar(12),FOREIGN KEY(user_id) REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
@@ -52,7 +51,7 @@ def registration(username = 'null', first_name = 'null', last_name = 'null', ema
 
 def insert_movies(id1 = 'null', name = 'null', nickname = 'null', service = 'null', genre = 'null',imdb_rating = 'null',user_rating = 'null',cast_1 = 'null' ,cast_2 = 'null',cast_3 = 'null',cast_4 = 'null',cast_5 = 'null',cast_6 = 'null',director = 'null',release_year = 'null',duration_minutes = 'null'):
 	conn, c = connect()
-	c.execute('insert into movies values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )', [id1 , name , nickname , genre , service ,imdb_rating ,user_rating ,cast_1  ,cast_2 ,cast_3 ,cast_4 ,cast_5 ,cast_6 ,director ,release_year ,duration_minutes ])
+	c.execute('insert into movies values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )', [id1 , name , nickname ,service , genre ,imdb_rating ,user_rating ,cast_1  ,cast_2 ,cast_3 ,cast_4 ,cast_5 ,cast_6 ,director ,release_year ,duration_minutes])
 	conn.commit()
 	conn.close()
 	
@@ -71,8 +70,6 @@ def select_all_accounts():        #selects info of all accounts
 	c.execute("select * from accounts")
 	data = c.fetchall()
 	conn.close()
-	# for i in data:
-	# 	print(i)
 	return data
 
 def select_all_movies():       #selects info of all movies
@@ -80,8 +77,6 @@ def select_all_movies():       #selects info of all movies
 	c.execute("select * from movies order by imdb_rating ;")
 	data = c.fetchall()
 	conn.close()
-	# for i in data:
-	# 	print(i)
 	return data
 
 def select_all_shows():   #selects info of all shows
@@ -89,8 +84,6 @@ def select_all_shows():   #selects info of all shows
 	c.execute("select * from shows order by imdb_rating ;")
 	data = c.fetchall()
 	conn.close()
-	# for i in data:
-	# 	print(i)
 	return data
 
 
@@ -102,41 +95,40 @@ def select_all_shows():   #selects info of all shows
 #maybe we will have to write separate functions based on combinations  
 #and then write a separate function that calls the suitable one   
 
-def select_movies_all_cri(genre = 'null', director = 'null', actor = 'null', year = 'null') :
+def select_movies_all_cri(genre = 'null',director = 'null', actor = 'null', year = 'null'):
 #this one is for the case where all search criteria are applied  
 	conn, c = connect()
 
+	que=""
 
-	if genre == 'null' and actor == 'null' and director == 'null':
+	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
 		que = "select * from movies"
 
 
 	else:
 		que = 'select * from movies where '
-		if genre!= 0:
+		if genre != 'null':
 			que += f"genre = '{genre}'"
 			que += " and "
-		if director!= 0:
+		if director != 'null':
 			que += f"director = '{director}'"
-			que += " and "
-		if actor!=0:
+			que += " and "	
+		if actor != 'null':
 			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
-			que+=" and "
-		if year!=0:
+			que += " and "
+		if year != 'null':
 			que += f"release_year = '{year}'"
 
-
+	
 	if que.split()[-1] == "and":
-		que = que[0:-5]		
+		que = que[0:-5]	
 
-	que += f" order by imdb_rating"
-	que += ' ;'
+	que += f" order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
+	conn.commit()
 	conn.close()
-	#for i in data:
-	#	print(i)
 	return data
 
 def select_service_movies(service = 'null'):
@@ -179,22 +171,22 @@ def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year
 	conn, c = connect()
 
 
-	if genre == 'null' and actor == 'null' and director == 'null':
+	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
 		que = "select * from shows"
 
 
 	else:
 		que = 'select * from shows where '
-		if genre!= 0:
+		if genre != 0:
 			que += f"genre = '{genre}'"
 			que += " and "
-		if director!= 0:
+		if director != 0:
 			que += f"director = '{director}'"
 			que += " and "
-		if actor!=0:
+		if actor != 0:
 			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
-			que+=" and "
-		if year!=0:
+			que += " and "
+		if year != 'null':
 			que += f"'{year}' between start_year and end_year"
 
 
@@ -206,6 +198,7 @@ def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year
 
 	c.execute(que)
 	data = c.fetchall()
+	conn.commit()
 	conn.close()
 	# for i in data:
 	# 	print(i)
@@ -217,7 +210,7 @@ def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year
 #Search By Name
 def select_show_name(name):
 	conn, c = connect()
-	que = f"select * from shows where name = '{name}' order by imdb_rating;"
+	que = f"select * from shows where name = '{name}' or nickname = '{name}' order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
@@ -230,7 +223,7 @@ def select_show_name(name):
 
 def select_movie_name(name):
 	conn, c = connect()
-	que = f"select * from movies where name = '{name}' order by imdb_rating;"
+	que = f"select * from movies where name = '{name}' or nickname = '{name}' order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
@@ -245,12 +238,12 @@ def select_movie_name(name):
 # table creation functions
 
 
-conn,c = connect()
-create_table_accounts()
-create_table_movies()
-create_table_shows()
-create_table_watchlist()
-create_table_feedback()
+# conn,c = connect()
+# create_table_accounts()
+# create_table_movies()
+# create_table_shows()
+# create_table_watchlist()
+# create_table_feedback()
 #=============================================================================================================
 #triggers
 
@@ -260,6 +253,16 @@ create_table_feedback()
 
 
 #=============================================================================================================
+# create_table_accounts()
+# create_table_movies()
+# create_table_shows()
+# create_table_watchlist()
+
+#=============================================================================================================
+# insert_movies('M0001','Central Intelligence','null','Netflix','Comedy',6.3,0.0,'Dwayne Johnson','Kevin Hart','Amy Ryan','null','null','null','Rawson Marshall Thurber',2016,107)
+# insert_movies('M0002','Love Per Square Foot','null','Netflix','Romantic comedy',7.3,0.0,'Vicky Kaushal','Angira Dhar','Alankrita Sahai','Ratna Pathak','Supriya Pathak','Brijendra Kala','Anand Tiwari',2018,133)
+# insert_movies('M0003','Newton','null','Amazon Prime Video','Drama',7.8,0.0,'Rajkummar Rao','Pankaj Tripathi','Anjali Patil','null','null','null','Amit Masurkar',2017,106)
+# insert_movies('M0004','Sixteen Candles','null','Netflix','Romatic comedy',7.1,0.0,'Molly Ringwald','Justin Henry','Michael Schoeffling','Haviland Morris','Gedde Watanabe','Anthony Michael Hall','John Hughes',1984,93)
 
 
 #===========================================================================================================

@@ -6,38 +6,6 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '0f2f57c293cf38d00e0d55b510360807'
 
-#===================================================================================================================================
-#functions to take inputs
-
-# def search_intake_service():
-# 	details = []
-# 	Genre = request.form['genre']
-# 	details.append(Genre)
-# 	Director = request.form['director']
-# 	details.append(Director)
-# 	Actor = request.form['actor']
-# 	details.append(Actor)
-# 	Year = request.form['year']
-# 	details.append(Year)
-
-# 	#details = (Genre,Director,Actor,Year)
-# 	# details = (request.form['genre'],request.form['director'],request.form['actor'], request.form['year'])
-# 	# return (request.form['genre'],request.form['director'],request.form['actor'], request.form['year'])
-# 	return details
-	
-
-# def search_intake(service = 'null'):
-# 	Actor = request.form['actor']
-# 	Director = request.form['director']
-# 	Genre = request.form['genre']
-# 	Year = request.form['year']
-	
-
-# def search_intake_name():
-# 	Name = request_form['name']	
-# 	return Name
-#=====================================================================================================================================
-
 @app.route("/")
 @app.route("/home")
 def home():
@@ -60,7 +28,7 @@ def netflix():
 		Genre = str(Genre1)
 		Director =str(Director1) 
 		Actor = str(Actor1)
-		Year = str(Year1)
+		Year = int(Year1)
 
 			# details = search_intake_service()
 		print('Movies\n')
@@ -75,19 +43,20 @@ def netflix():
 
 @app.route("/netflixname")
 def netflix_name():
-	Name = ''
+	Name1 = ''
+	Name2 = ''
 	if(request.method == 'POST'):
-		Name = search_intake_name()
-	print('Movies\n')
-	Name1 = select_movie_name(Name)
-	print('Shows')
-	Name2 = select_show_name(Name)
+		Name = request.form['name']
+		print('Movies\n')
+		Name1 = select_movie_name(Name)
+		print('Shows')
+		Name2 = select_show_name(Name)
 	
-	return render_template('netflixname.html', Name1 = Name1, Name2 = Name2 )	
+	return render_template('netflixname.html', Name1 = Name1, Name2 = Name2)	
 
 #======================================================================================================	
 
-@app.route("/amazon")
+@app.route("/amazon", methods = ['GET','POST'])
 def amazon():
 	details = []
 	data1 = ()
@@ -97,35 +66,30 @@ def amazon():
 		Director1 = request.form['director']
 		Actor1 = request.form['actor']
 		Year1 = request.form['year']
+		# Genre = str(Genre1)
+		# Director =str(Director1) 
+		# Actor = str(Actor1)
+		# Year = int(Year1)
+		# print(Genre1)
+		# print(Director1)
+		# print(Actor1)
+		# print(Year1)
 
-		Genre = str(Genre1)
-		Director =str(Director1) 
-		Actor = str(Actor1)
-		Year = str(Year1)
-
-			# details = search_intake_service()
-		print('Movies\n')
-		# data2 = select_shows_all_cri(details[0],details[1],details[2],details[3])
-		data2 = select_movies_all_cri(Genre,Director,Actor,Year)
-		print('Shows')
-		# data1 = select_movies_all_cri(details[0],details[1],details[2],details[3])
-		data1 = select_shows_all_cri(Genre,Director,Actor,Year)
-
+		data1 = select_movies_all_cri(Genre1,Director1,Actor1,Year1)
+		data2 = select_shows_all_cri(Genre1,Director1,Actor1,Year1)
 	return render_template('amazon.html',data1 = data1, data2 = data2)
 
 
 
-@app.route("/amazonname")
+@app.route("/amazonname", methods = ['GET','POST'])
 def amazon_name():
-	Name = ''
+	Name1 = ''
+	Name2 = ''
 	if(request.method == 'POST'):
-		Name = search_intake_name()
-	print('Movies\n')
-	select_movie_name(Name)
-	print('Shows')
-	select_show_name(Name)
-	
-	return render_template('amazonname.html', Name1 = Name1, Name2 = Name2 )	
+		Name = request.form['name']
+		Name1 = select_movie_name(Name)
+		Name2 = select_show_name(Name)		
+	return render_template('amazonname.html', Name1 = Name1, Name2 = Name2)	
 
 
 #=======================================================================================================
@@ -141,18 +105,18 @@ def hotstar():
 		Actor1 = request.form['actor']
 		Year1 = request.form['year']
 
-		Genre = str(Genre1)
-		Director =str(Director1) 
-		Actor = str(Actor1)
-		Year = str(Year1)
+		# Genre = str(Genre1)
+		# Director =str(Director1) 
+		# Actor = str(Actor1)
+		# Year = int(Year1)
 
-			# details = search_intake_service()
-		print('Movies\n')
-		# data2 = select_shows_all_cri(details[0],details[1],details[2],details[3])
-		data2 = select_movies_all_cri(Genre,Director,Actor,Year)
-		print('Shows')
-		# data1 = select_movies_all_cri(details[0],details[1],details[2],details[3])
-		data1 = select_shows_all_cri(Genre,Director,Actor,Year)
+		print(Genre1)
+		print(Director1)
+		print(Actor1)
+		print(Year1)
+
+		data1 = select_movies_all_cri(Genre1,Director1,Actor1,Year1)
+		data2 = select_shows_all_cri(Genre1,Director1,Actor1,Year1)
 
 	
 	return render_template('hotstar.html',data1 = data1, data2 = data2)
@@ -163,14 +127,32 @@ def hotstar_name():
 	Name = ''
 	if(request.method == 'POST'):
 		Name = search_intake_name()
-	print('Movies\n')
-	select_movie_name(Name)
-	print('Shows')
-	select_show_name(Name)
-	
+		print('Movies\n')
+		select_movie_name(Name)
+		print('Shows')
+		select_show_name(Name)
+		
 	return render_template('hotstarname.html', Name1 = Name1, Name2 = Name2 )	
 
+# @app.route("/results", methods=['GET','POST'])
+# def results():
+# 	details = []
+# 	data1 = ()
+# 	data2 = ()
+# 	if(request.method == 'POST'):
+# 		Genre1 = request.form['genre']
+# 		Director1 = request.form['director']
+# 		Actor1 = request.form['actor']
+# 		Year1 = request.form['year']
 
+# 		Genre = str(Genre1)
+# 		Director =str(Director1) 
+# 		Actor = str(Actor1)
+# 		Year = str(Year1)
+
+# 		data1 = select_movies_all_cri(Genre,Director,Actor,Year)
+# 		data2 = select_shows_all_cri(Genre,Director,Actor,Year)
+# 	return render_template('results.html', data1=data1, data2=data2)
 #=========================================================================================================	
 
 @app.route("/register", methods=['GET', 'POST'])
