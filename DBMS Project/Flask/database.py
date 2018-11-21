@@ -32,7 +32,7 @@ def create_table_watchlist():
 	c.execute('CREATE TABLE IF NOT EXISTS watchlist(id varchar(12) primary key, user_id varchar(12) not null, movie_id varchar(12), show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
 
 def create_table_feedback():
-	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12),show_id varchar(12),FOREIGN KEY(user_id) REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12) ,show_id varchar(12) ,movie_name varchar(50),show_name varchar(50),rating decimal(2.2),FOREIGN KEY(user_id) REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id)) on UPDATE CASCADE')
 
 def create_table_streams():
 	c.execute('CREATE TABLE IF NOT EXISTS streams(stream_id varchar(12) primary key,user_id varchar(12),movie_id varchar(12),show_id varchar(12),foreign key(user_id) references accounts(username),foreign key(movie_id) references movies(id),foreign key(show_id) references shows(id))')
@@ -61,6 +61,7 @@ def insert_shows(id1 = 'null', name = 'null', nickname = 'null', service = 'null
 	conn.commit()
 	conn.close()
 	
+
 
 #======================================================================================================================================
 #select_all queries
@@ -210,7 +211,7 @@ def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year
 #Search By Name
 def select_show_name(name):
 	conn, c = connect()
-	que = f"select * from shows where name = '{name}' or nickname = '{name}' order by imdb_rating;"
+	que = f"select * from show_shows where name = '{name}' or nickname = '{name}' order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
@@ -223,7 +224,7 @@ def select_show_name(name):
 
 def select_movie_name(name):
 	conn, c = connect()
-	que = f"select * from movies where name = '{name}' or nickname = '{name}' order by imdb_rating;"
+	que = f"select * from show_movies where name = '{name}' or nickname = '{name}' order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
@@ -231,6 +232,13 @@ def select_movie_name(name):
 	# for i in data:
 	# 	print(i)
 	return data
+
+#=============================================================================================================
+#feedback
+
+def give_feedback(name,userrating):
+	conn,c = connect()
+	que = f"select  "
 
 
 
@@ -269,4 +277,117 @@ def select_movie_name(name):
 conn.commit() #commit the current transaction		
 c.close()   #close the cursor
 conn.close()    #close the connection
+#==============================================================================================================
+#views
+
+def movies_view():
+
+	conn, cur = connect()
+
+	cur.execute('''CREATE VIEW show_movies as SELECT 
+				name,
+				nickname,
+				genre,
+				director,
+				imdb_rating,
+				cast_1,
+				cast_2,
+                release_year
+					from movies;''')
+
+	conn.commit()
+	conn.close()
+
+
+def shows_view():
+
+	conn, cur = connect()
+
+	cur.execute('''CREATE VIEW show_movies as SELECT 
+				name,
+				nickname,
+				genre,
+				director,
+				imdb_rating,
+				cast_1,
+				cast_2,
+                start_year as 'from',
+                end_year as 'to'
+					from shows;''')
+
+	conn.commit()
+	conn.close()
+
+
+
+def show_movies_view():
+
+	conn, cur = connect()
+
+	cur.execute('SELECT * from show_movies')
+	data = cur.fetchall()
+	conn.close()
+
+	for r in data:
+		print(r)
+
+	return data
+
+
+def show_shows_view():
+
+	conn, cur = connect()
+
+	cur.execute('SELECT * from show_shows')
+	data = cur.fetchall()
+	conn.close()
+
+	for r in data:
+		print(r)
+
+	return data
+
+'''
+---------------------------------------------------------------------------------------------------------------------
+Triggers
+'''
+
+def create_trigger():
+
+	conn, cur = connect()
+
+	cur.execute('''CREATE trigger add_books_to_inDemand 
+				   
+				   after UPDATE 
+				   on bookhub
+				   WHEN NEW.quantity == 0
+				   
+				   BEGIN	 
+
+				   		insert into in_demand values(new.id, new.book_name, new.author, 
+				   		new.stream, new.cost, new.quantity, new.sold_price, new.usn);
+
+				   		delete from bookhub where id = new.id;
+
+				   END;
+
+				''')
+
+	conn.commit()
+	conn.close()
+
+#==============================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
 #==============================================================================================================
