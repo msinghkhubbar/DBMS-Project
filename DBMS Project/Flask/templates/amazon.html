@@ -43,15 +43,31 @@
 	<div>
 		<h1>MOVIES</h1>
 		<table>
+			<tr>
+				<th>NAME</th>
+				<th>GENRE</th>
+				<th>DIRECTOR</th>
+				<th>IMDb</th>
+				<th>CAST 1</th>
+				<th>CAST 2</th>
+				<th>YEAR</th>
+			</tr>
 			{% for item in data1 %}
+			{% set movie_name=item[1] %}
+			{% set idd=item[0] %}
 				<tr>
-					<td>{{ item[1] }}</td>
-					<td>{{ item[4] }}</td>
-					<td>{{ item[13] }}</td>
-					<td>{{ item[5] }}</td>
-					<td>{{ item[7] }}</td>
-					<td>{{ item[8] }}</td>
-					<td>{{ item[14] }}</td>
+					<form class = "form" action="\feedback" method="POST">
+						<td>{{ idd }}</td>
+						<td>{{ item[1] }}</td>
+						<td>{{ item[4] }}</td>
+						<td>{{ item[13] }}</td>
+						<td>{{ item[5] }}</td>
+						<td>{{ item[7] }}</td>
+						<td>{{ item[8] }}</td>
+						<td>{{ item[14] }}</td>
+						<td><button required name="1" class="btn btn-primary my-1" placeholder="Feedback"  method = 'POST' value="{{movie_name}}">FEEDBACK</button></td>
+						<!-- <td></button><input type="submit" required name="1" placeholder="Feedback" value="{{movie_name}}" method="POST"></button></td> -->
+					</form>
 				</tr>
 			{% endfor %}
 		</table>
@@ -69,6 +85,7 @@
 					<td>{{ item[8] }}</td>
 					<td>{{ item[14] }}</td>
 					<td>{{ item[16] }}</td>
+					<!-- <td><button type="submit" class="btn btn-primary my-1" method = 'POST'>Feedback</button></td> -->
 				</tr>
 			{% endfor %}
 			<tr>{{ data3 }}</tr>

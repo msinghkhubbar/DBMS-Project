@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+
+
+{% block content %}
+	<div class="container">
+		<form class="form" action="/feedbacksubmit" method="POST">
+			<h1>{{movie_name}}</h1>
+			<h1>{{idd}}</h1>
+			<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Rating</label>
+				<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="rating"  style="margin-right:85px">
+					<option selected>choose..</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</select>
+			<button type="submit" class="btn btn-primary my-1" method = 'POST'>Submit</button>
+		</form>	
+	</div>
+
+
+
+
+{% endblock content %}
