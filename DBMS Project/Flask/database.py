@@ -3,7 +3,8 @@ import time
 import datetime
 import random
 import os
-from flask_bcrypt import generate_password_hash, check_password_hash
+# from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
+import database
 
 #conn = sqlite3.connect('mydatabase.db') #create the db
 #c = conn.cursor()  #set the cursor for the dataset traversal
@@ -16,11 +17,11 @@ def connect():
 	c = conn.cursor()  #set the cursor for the dataset traversal
 	return conn,c
 
-#conn,c = connect()
+conn,c = connect()
 #=================================================================================================================================
 #create tables	
 def create_table_accounts():
-	c.execute('CREATE TABLE IF NOT EXISTS accounts(first_name varchar(20) not null, last_name varchar(20) not null,email_id varchar(320) not null,password varchar(32) not null,login_status boolean not null,primary key(email_id))')
+	c.execute('CREATE TABLE IF NOT EXISTS accounts(first_name varchar(20) not null, last_name varchar(20) not null,email_id varchar(320) not null,password varchar(32) not null,primary key(email_id))')
 
 def create_table_movies():
 	c.execute('CREATE TABLE IF NOT EXISTS movies(id varchar(12), name varchar(50) not null, nickname varchar(10),service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,release_year int(4) not null,duration_minutes int(4) not null,primary key(id))')
@@ -32,7 +33,7 @@ def create_table_watchlist():
 	c.execute('CREATE TABLE IF NOT EXISTS watchlist(id varchar(12) primary key, user_id varchar(12) not null, movie_id varchar(12), show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
 
 def create_table_feedback():
-	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12) ,show_id varchar(12) ,movie_name varchar(50),show_name varchar(50),rating decimal(2.2),FOREIGN KEY(user_id) REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id)) on UPDATE CASCADE')
+	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12) ,show_id varchar(12) ,rating decimal(2.2),comments varchar(280),FOREIGN KEY(user_id) REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id)) on UPDATE CASCADE')
 
 def create_table_streams():
 	c.execute('CREATE TABLE IF NOT EXISTS streams(stream_id varchar(12) primary key,user_id varchar(12),movie_id varchar(12),show_id varchar(12),foreign key(user_id) references accounts(username),foreign key(movie_id) references movies(id),foreign key(show_id) references shows(id))')
@@ -41,11 +42,11 @@ def create_table_streams():
 #======================================================================================================================================
 #insert_queries
 
-def registration(username = 'null', first_name = 'null', last_name = 'null', email_id = 'null', password = 'null', login_status = 'null'):
+def registration(first_name = 'null', last_name = 'null', email_id = 'null', password = 'null'):
 	conn, c = connect()
-	password = generate_password_hash(password)
-	password = str(password,"utf-8")
-	c.execute('insert into accounts values (?, ?, ?, ?, ?, ?, ?)', [username, first_name, last_name, email_id, password, login_status])
+	# password = generate_password_hash(password)
+	# password = str(password,"utf-8")
+	c.execute('insert into accounts values (?, ?, ?, ?)', [first_name, last_name, email_id, password])
 	conn.commit()
 	conn.close()
 
@@ -61,14 +62,18 @@ def insert_shows(id1 = 'null', name = 'null', nickname = 'null', service = 'null
 	conn.commit()
 	conn.close()
 	
-
-
+def check_login(email):
+	conn,c = connect()
+	c.execute(f'select password from accounts where email_id = "{email}" ;')
+	data = c.fetchall()
+	conn.close()
+	return data[0]
 #======================================================================================================================================
 #select_all queries
 
 def select_all_accounts():        #selects info of all accounts 
 	conn, c = connect()
-	c.execute("select * from accounts")
+	c.execute("select * from accounts ;")
 	data = c.fetchall()
 	conn.close()
 	return data
@@ -221,7 +226,6 @@ def select_show_name(name):
 	return data
 
 
-
 def select_movie_name(name):
 	conn, c = connect()
 	que = f"select * from show_movies where name = '{name}' or nickname = '{name}' order by imdb_rating;"
@@ -236,10 +240,34 @@ def select_movie_name(name):
 #=============================================================================================================
 #feedback
 
-def give_feedback(name,userrating):
+def feedback_name(idd):
 	conn,c = connect()
-	que = f"select  "
+	que = f"select name from movies where id = '{idd}' ;"
+	que1 = f"select name from shows where id = '{idd}' ;"
+	if(idd[0] == 'M'):
+		c.execute(que)
+	elif(idd[0] == 'S'):
+		c.execute(que1)
 
+	data = c.fetchall()
+	conn.close()
+	return data
+
+def feedback_submit(uid,idd,rating,comment):
+	conn, c = connect()
+	NA = 'NA'
+	if(idd[0] == 'M'):
+		c.execute('insert into feedback values (?, ?, ?, ?, ?)', [uid,idd,NA,rating,comment])
+
+	if(idd[0] == 'S'):
+		c.execute('insert into feedback values (?, ?, ?, ?, ?)', [uid,NA,idd,rating,comment])
+	
+	data = c.fetchall()
+	conn.close()
+	return data	
+
+	# conn.commit()
+	# conn.close()
 
 
 #=============================================================================================================
@@ -274,6 +302,8 @@ def give_feedback(name,userrating):
 
 
 #===========================================================================================================
+
+
 conn.commit() #commit the current transaction		
 c.close()   #close the cursor
 conn.close()    #close the connection

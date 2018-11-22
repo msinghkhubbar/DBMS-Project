@@ -1,10 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+import database
 
+
+def name_exists(form, field):
+    if (field.data in database.select_users()):
+        raise ValidationError('Email already exists.')
 
 class RegistrationForm(FlaskForm):
-	username = StringField('Username *', validators=[DataRequired(),Length(min=2, max=20)])
 	firstname = StringField('First Name *', validators=[DataRequired()])
 	lastname = StringField('Last Name *', validators=[DataRequired()])
 	email = StringField('Email *', validators=[DataRequired(), Email()])
