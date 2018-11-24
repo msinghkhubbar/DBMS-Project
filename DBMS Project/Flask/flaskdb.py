@@ -20,14 +20,12 @@ def take():
 	if(request.method == 'POST'):
 		Name = request.form['name']
 	return Name	
-	
 
 
-@app.route("/")
 @app.route("/home")
 def home():
 	# search_intake_service()
-	return render_template('index.html') 
+	return render_template('index.html', logged_user=logged_user) 
 
 #=====================================================================================================    
 
@@ -79,7 +77,7 @@ def netflix_name():
 		print('Shows')
 		Name2 = select_show_name(Name)
 	
-	return render_template('netflixname.html', Name1 = Name1, Name2 = Name2)	
+	return render_template('netflixname.html', Name1 = Name1, Name2 = Name2, logged_user=logged_user)	
 
 #======================================================================================================	
 
@@ -104,7 +102,7 @@ def amazon():
 
 		data1 = select_movies_all_cri(Genre1,Director1,Actor1,Year1)
 		data2 = select_shows_all_cri(Genre1,Director1,Actor1,Year1)
-	return render_template('amazon.html',data1 = data1, data2 = data2)
+	return render_template('amazon.html',data1 = data1, data2 = data2, logged_user=logged_user)
 
 
 
@@ -116,7 +114,7 @@ def amazon_name():
 		Name = request.form['name']
 		Name1 = select_movie_name(Name)
 		Name2 = select_show_name(Name)		
-	return render_template('amazonname.html', Name1 = Name1, Name2 = Name2)	
+	return render_template('amazonname.html', Name1 = Name1, Name2 = Name2, logged_user=logged_user)	
 
 
 #=======================================================================================================
@@ -150,7 +148,7 @@ def hotstar():
 			movie_result.append(i)
 		for i in data2:
 			show_result.append(i)
-	return render_template('hotstar.html',data1 = data1, data2 = data2)
+	return render_template('hotstar.html',data1 = data1, data2 = data2, logged_user=logged_user)
 
 
 @app.route("/hotstarname", methods = ['GET','POST'])
@@ -161,12 +159,13 @@ def hotstar_name():
 		Name = request.form['name']
 		Name1 = select_movie_name(Name)
 		Name2 = select_show_name(Name)		
-	return render_template('hotstarname.html', Name1 = Name1, Name2 = Name2)	
+	return render_template('hotstarname.html', Name1 = Name1, Name2 = Name2, _logged_user=logged_user)	
 
 # @app.route("/results", methods=['GET','POST'])
 # def results():
 # 	details = []
 # 	data1 = ()
+
 # 	data2 = ()
 # 	if(request.method == 'POST'):
 # 		Genre1 = request.form['genre']
@@ -194,23 +193,48 @@ def feedback():
 		movie_name = feedback_name(idd)
 		# print(movie_name)
 		# print(idd)
-	return render_template('feedback.html', idd= idd, movie_name = movie_name[0])
+	return render_template('feedback.html', idd= idd, movie_name = movie_name[0], logged_user=logged_user)
 
 @app.route("/feedbacksubmit", methods = ['GET','POST'])
 def feedbacksubmit():
 	# global movie_name
 	global idd
+	global logged_user
 	rating=0
 	if(request.method == 'POST'):
 		rating = request.form['rating']
 		comment = request.form['comment']
-		feedback_submit(uid,idd,rating,comment)
+		feedback_submit(logged_user,idd,rating,comment)                 #flash error in case of an integrity error,error getting detected
 		# print(movie_name)
 		print(rating)
 		print(idd)
-	return render_template("index.html")
+	return render_template("index.html", logged_user = logged_user)
+
+@app.route("/watchlist", methods = ['GET','POST'])
+def watchlist():	
+	global idd
+	global logged_user
+	data1=()
+	data2=()
+	if (request.method == 'POST'):
+		idd = request.form['2']
+		watchlist_submit(logged_user,idd)                 #error not detected,shouldnt display in case of an integrity error,just flash a message
+		data1,data2 = watchlist_display(logged_user)
+		print(data1)
+		print(data2)
+	return render_template("watchlist.html", data1=data1, data2=data2,logged_user = logged_user)
+
+@app.route("/watchlistDisplay")
+def watchlistDisplay():	
+	global idd
+	global logged_user               #error not detected,shouldnt display in case of an integrity error,just flash a message
+	data1,data2 = watchlist_display(logged_user)
+	print(data1)
+	print(data2)
+	return render_template("watchlist.html", data1=data1, data2=data2,logged_user = logged_user)
 
 
+@app.route("/")
 @app.route("/register", methods=['GET', 'POST'])
 def register():
 	form = RegistrationForm()
@@ -218,7 +242,7 @@ def register():
 		database.registration(form.firstname.data, form.lastname.data, form.email.data, form.password.data)
 		flash(f'Account created for {form.email.data}','success')
 		return redirect(url_for('register'))
-	return render_template('register.html', title='Register', form=form)
+	return render_template('register.html', title='Register', form=form, user=logged_user)
 
 
 @app.route("/login", methods=['GET','POST'])
@@ -240,7 +264,7 @@ def login():
 			flash('Login unsuccesful. Please check email or password', 'danger')
 			return render_template('login.html', title='Login', form=form)
 	else:		
-		return render_template('login.html', title='Login', form=form)
+		return render_template('login.html', title='Login', form=form, user=logged_user)
 
 
 

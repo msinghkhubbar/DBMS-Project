@@ -30,13 +30,14 @@ def create_table_shows():
 	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null, nickname varchar(10), service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,start_year int(4) not null,end_year varchar(8) not null,seasons int(3) not null,primary key(id))')
 
 def create_table_watchlist():
-	c.execute('CREATE TABLE IF NOT EXISTS watchlist(id varchar(12) primary key, user_id varchar(12) not null, movie_id varchar(12), show_id varchar(12),FOREIGN KEY(user_id)REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS watchlist(email_id varchar(12) not null, movie_id varchar(12), show_id varchar(12), movie_name varchar(50) ,show_name varchar(50),CONSTRAINT uniq UNIQUE(email_id,movie_id,show_id),FOREIGN KEY(email_id) REFERENCES accounts(email_id) on update cascade,FOREIGN KEY(movie_id) REFERENCES movies(id) on update cascade,FOREIGN KEY(show_id) REFERENCES shows(id) on update cascade )')
+
 
 def create_table_feedback():
-	c.execute('CREATE TABLE IF NOT EXISTS feedback(user_id varchar(12) ,movie_id varchar(12) ,show_id varchar(12) ,rating decimal(2.2),comments varchar(280),FOREIGN KEY(user_id) REFERENCES accounts(id),FOREIGN KEY(movie_id) REFERENCES movies(id),FOREIGN KEY(show_id) REFERENCES shows(id)) on UPDATE CASCADE')
+	c.execute('CREATE TABLE IF NOT EXISTS feedback(email_id varchar(12) ,movie_id varchar(12),show_id varchar(12),rating decimal(2.2),comments varchar(280),CONSTRAINT uniqs UNIQUE(email_id,movie_id,show_id),FOREIGN KEY(email_id) REFERENCES accounts(email_id) on update cascade,FOREIGN KEY(movie_id) REFERENCES movies(id) on update cascade,FOREIGN KEY(show_id) REFERENCES shows(id) on update cascade )')
 
 def create_table_streams():
-	c.execute('CREATE TABLE IF NOT EXISTS streams(stream_id varchar(12) primary key,user_id varchar(12),movie_id varchar(12),show_id varchar(12),foreign key(user_id) references accounts(username),foreign key(movie_id) references movies(id),foreign key(show_id) references shows(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS streams(stream_id varchar(12) primary key,user_id varchar(12),movie_id varchar(12),show_id varchar(12),foreign key(user_id) references accounts(username),foreign key(movie_id) references movies(id),foreign key(show_id) references shows(id));')
 
 
 #======================================================================================================================================
@@ -262,12 +263,53 @@ def feedback_submit(uid,idd,rating,comment):
 	if(idd[0] == 'S'):
 		c.execute('insert into feedback values (?, ?, ?, ?, ?)', [uid,NA,idd,rating,comment])
 	
-	data = c.fetchall()
+	conn.commit()
 	conn.close()
-	return data	
+	
+
+#=============================================================================================================
+#watchlist
+
+def watchlist_submit(eid,idd):
+	conn, c = connect()
+	NA = 'NA'
+
+	na_m = f"select name from movies where id = '{idd}';"
+	na_s = f"select name from shows where id = '{idd}';"
+	c.execute(na_m)
+	name_m = c.fetchall()
+	c.execute(na_s)
+	name_s = c.fetchall()
+	print(name_s)
+	print(name_m)
+	if(idd[0] == 'M'):
+		c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,None,str(name_m),None])
+
+	if(idd[0] == 'S'):
+		c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,None,idd,None,str(name_s)])
+	
+	conn.commit()
+	conn.close()
+	
 
 	# conn.commit()
 	# conn.close()
+
+def watchlist_display(eid):
+	conn, c = connect()
+
+	que = f'select movies.name,movies.genre,movies.imdb_rating from watchlist,movies where watchlist.email_id = "{eid}" and watchlist.movie_id = movies.id;'
+	que1 = f'select shows.name,shows.genre,shows.imdb_rating from watchlist,shows where watchlist.email_id = "{eid}" and watchlist.show_id = shows.id;'
+
+	c.execute(que)
+	data1 = c.fetchall()
+	c.execute(que1)
+	data2 = c.fetchall()
+	print(data1)
+	print(data2)
+	
+	conn.close()
+	return (data1,data2)
 
 
 #=============================================================================================================
@@ -275,6 +317,10 @@ def feedback_submit(uid,idd,rating,comment):
 
 
 # conn,c = connect()
+# # create_table_feedback()
+# create_table_watchlist()
+# conn.commit()
+# conn.close()
 # create_table_accounts()
 # create_table_movies()
 # create_table_shows()
@@ -292,7 +338,8 @@ def feedback_submit(uid,idd,rating,comment):
 # create_table_accounts()
 # create_table_movies()
 # create_table_shows()
-# create_table_watchlist()
+
+
 
 #=============================================================================================================
 # insert_movies('M0001','Central Intelligence','null','Netflix','Comedy',6.3,0.0,'Dwayne Johnson','Kevin Hart','Amy Ryan','null','null','null','Rawson Marshall Thurber',2016,107)
@@ -304,9 +351,7 @@ def feedback_submit(uid,idd,rating,comment):
 #===========================================================================================================
 
 
-conn.commit() #commit the current transaction		
-c.close()   #close the cursor
-conn.close()    #close the connection
+   #close the connection
 #==============================================================================================================
 #views
 
@@ -322,7 +367,7 @@ def movies_view():
 				imdb_rating,
 				cast_1,
 				cast_2,
-                release_year
+				release_year
 					from movies;''')
 
 	conn.commit()
@@ -333,7 +378,7 @@ def shows_view():
 
 	conn, cur = connect()
 
-	cur.execute('''CREATE VIEW show_movies as SELECT 
+	cur.execute('''CREATE VIEW show_shows as SELECT 
 				name,
 				nickname,
 				genre,
@@ -341,13 +386,17 @@ def shows_view():
 				imdb_rating,
 				cast_1,
 				cast_2,
-                start_year as 'from',
-                end_year as 'to'
+				start_year as 'from',
+				end_year as 'to'
 					from shows;''')
 
 	conn.commit()
 	conn.close()
 
+# shows_view()	
+# conn.commit() #commit the current transaction		
+# c.close()   #close the cursor
+# conn.close() 
 
 
 def show_movies_view():
@@ -394,10 +443,10 @@ def create_trigger():
 				   
 				   BEGIN	 
 
-				   		insert into in_demand values(new.id, new.book_name, new.author, 
-				   		new.stream, new.cost, new.quantity, new.sold_price, new.usn);
+						insert into in_demand values(new.id, new.book_name, new.author, 
+						new.stream, new.cost, new.quantity, new.sold_price, new.usn);
 
-				   		delete from bookhub where id = new.id;
+						delete from bookhub where id = new.id;
 
 				   END;
 
