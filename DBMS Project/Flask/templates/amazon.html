@@ -53,11 +53,11 @@
 				<th>YEAR</th>
 			</tr>
 			{% for item in data1 %}
-			{% set movie_name=item[1] %}
-			{% set idd=item[0] %}
+			<!-- {% set movie_name=item[1] %} -->
+			 {% set idd=item[0] %} 
 				<tr>
 					<form class = "form" action="\feedback" method="POST">
-						<td>{{ idd }}</td>
+						<td>{{ idd }}</td> 
 						<td>{{ item[1] }}</td>
 						<td>{{ item[4] }}</td>
 						<td>{{ item[13] }}</td>
@@ -65,8 +65,11 @@
 						<td>{{ item[7] }}</td>
 						<td>{{ item[8] }}</td>
 						<td>{{ item[14] }}</td>
-						<td><button required name="1" class="btn btn-primary my-1" placeholder="Feedback"  method = 'POST' value="{{movie_name}}">FEEDBACK</button></td>
+						<td><button required name="1" class="btn btn-primary my-1" placeholder="Feedback"  method = 'POST' value="{{idd}}" >FEEDBACK</button></td>
 						<!-- <td></button><input type="submit" required name="1" placeholder="Feedback" value="{{movie_name}}" method="POST"></button></td> -->
+					</form>
+					<form class="form" action="\watchlist" method="POST">
+						<td><button required name="2" class="btn btn-primary my-1" placeholder="Add to Watchlist"  method = 'POST' value="{{idd}}" >ADD TO WATCHLIST</button></td>
 					</form>
 				</tr>
 			{% endfor %}

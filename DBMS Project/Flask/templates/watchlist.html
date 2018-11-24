@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+	<div>
+		<h1>WATCHLIST</h1>
+		<table>
+			{% for item in data1 %} 
+				<tr>
+					<td>{{ item[0] }}</td>
+					<td>{{ item[1] }}</td>
+				</tr>
+			{% endfor %}
+
+			{% for item in data2 %} 
+				<tr>
+					<td>{{ item[0] }}</td>
+					<td>{{ item[1] }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{% endblock %}

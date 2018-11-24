@@ -1,7 +1,13 @@
-{% extends "layout.html" %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-{% block content %}
+  </head>
+  <body>
 	<div class="container">
 		<h2>Login</h2>
 		<div class="content-section"></div>
@@ -9,7 +15,7 @@
 			{{ form.hidden_tag() }}
 			<fieldset class="form-group">
 				<div class="form-group">
-					{{ form.email.label(class="form-control-label") }}
+					{{ form.email.label(class="form-control-label" ) }}
 
 					{% if form.email.errors %}
 						{{ form.email(class="form-control form-control-lg is-invalid") }}	
@@ -19,11 +25,11 @@
 							{% endfor %}
 						</div>
 					{% else %}
-						{{ form.email(class="form-control form-control-lg") }}
+						{{ form.email(class="form-control form-control-lg" ) }}
 					{% endif %}
 				</div>
 				<div class="form-group">
-					{{ form.password.label(class="form-control-label") }}
+					{{ form.password.label(class="form-control-label" ) }}
 
 					{% if form.password.errors %}
 						{{ form.password(class="form-control form-control-lg is-invalid") }}	
@@ -48,4 +54,5 @@
 			<hr>
 		</form>
 	</div>
-{% endblock content %}
+</body>
+</html>
