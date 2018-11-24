@@ -242,7 +242,7 @@ def register():
 		database.registration(form.firstname.data, form.lastname.data, form.email.data, form.password.data)
 		flash(f'Account created for {form.email.data}','success')
 		return redirect(url_for('register'))
-	return render_template('register.html', title='Register', form=form, user=logged_user)
+	return render_template('register.html', title='Register', form=form)
 
 
 @app.route("/login", methods=['GET','POST'])
@@ -265,6 +265,14 @@ def login():
 			return render_template('login.html', title='Login', form=form)
 	else:		
 		return render_template('login.html', title='Login', form=form, user=logged_user)
+
+@app.route("/recommenations")
+def login():
+	global logged_user
+	passw = ''
+	
+			
+		return render_template('recommendation.html', title='Login', form=form, user=logged_user)
 
 
 

@@ -24,7 +24,7 @@ def create_table_accounts():
 	c.execute('CREATE TABLE IF NOT EXISTS accounts(first_name varchar(20) not null, last_name varchar(20) not null,email_id varchar(320) not null,password varchar(32) not null,primary key(email_id))')
 
 def create_table_movies():
-	c.execute('CREATE TABLE IF NOT EXISTS movies(id varchar(12), name varchar(50) not null, nickname varchar(10),service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,release_year int(4) not null,duration_minutes int(4) not null,primary key(id))')
+	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null, nickname varchar(10),service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,release_year int(4) not null,duration_minutes int(4) not null,primary key(id))')
 
 def create_table_shows():
 	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null, nickname varchar(10), service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,start_year int(4) not null,end_year varchar(8) not null,seasons int(3) not null,primary key(id))')
@@ -282,16 +282,17 @@ def watchlist_submit(eid,idd):
 	name_s = c.fetchall()
 	print(name_s)
 	print(name_m)
-	if(idd[0] == 'M'):
-		c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,None,str(name_m),None])
-
-	if(idd[0] == 'S'):
-		c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,None,idd,None,str(name_s)])
-	
+	c.execute(f"select * from watchlist where email_id = '{eid}' and movie_id = '{idd}' or show_id = '{idd}'")
+	data1 = c.fetchall()
+	if not data1:
+		if(idd[0] == 'M'):
+			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,None,str(name_m),None])
+		if(idd[0] == 'S'):
+			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,None,idd,None,str(name_s)])
 	conn.commit()
 	conn.close()
 	
-
+watchlist_submit('djyo54@gmail.com','M0001')
 	# conn.commit()
 	# conn.close()
 
@@ -431,22 +432,19 @@ def show_shows_view():
 Triggers
 '''
 
-def create_trigger():
+def create_trigger_show():
 
 	conn, cur = connect()
 
-	cur.execute('''CREATE trigger add_books_to_inDemand 
+	cur.execute('''CREATE trigger update_show_rating
 				   
-				   after UPDATE 
-				   on bookhub
-				   WHEN NEW.quantity == 0
+				   after INSERT
+				   on feedback
+				   WHEN NEW.movie_id == 'NA'
 				   
 				   BEGIN	 
 
-						insert into in_demand values(new.id, new.book_name, new.author, 
-						new.stream, new.cost, new.quantity, new.sold_price, new.usn);
-
-						delete from bookhub where id = new.id;
+						update shows set user_rating = (select avg(rating) from feedback where show_id = new.show_id) where id = new.show_id;
 
 				   END;
 
@@ -455,11 +453,80 @@ def create_trigger():
 	conn.commit()
 	conn.close()
 
+def create_trigger_movie():
+
+	conn, cur = connect()
+
+	cur.execute('''CREATE trigger update_movie_rating
+				   
+				   after INSERT
+				   on feedback
+				   WHEN NEW.show_id == 'NA'
+				   
+				   BEGIN	 
+
+						update movies set user_rating = (select avg(rating) from feedback where movie_id = new.movie_id) where id = new.movie_id;
+
+				   END;
+
+				''')
+
+	conn.commit()
+	conn.close()
+
+# create_trigger_show()
+# create_trigger_movie()
 #==============================================================================================================
+#recommendation
+
+# def recommend(idd,actor,gen,dire):
+# 	conn, cur = connect()
+
+# 	c.execute(f"SELECT movies.name,movies.genre,movies.imdb_rating from movies where movies.genre = '{gen}' order by user_rating,imdb_rating")
+# 	mov1_data = c.fetchall()
+
+# 	c.execute(f"SELECT movies.name,movies.genre,movies.imdb_rating from movies where movies.cast_1 = '{actor}' or movies.cast_2 = '{actor}' or movies.cast_3 = '{actor}' or movies.cast_4 = '{actor}' or movies.cast_5 = '{actor}' or movies.cast_6 = '{actor} order by user_rating,imdb_rating'")
+# 	mov2_data = c.fetchall()
+
+# 	c.execute(f"SELECT movies.name,movies.genre,movies.imdb_rating from movies where movies.director = '{dire}' order by user_rating,imdb_rating")
+# 	mov3_data = c.fetchall()
+
+# 	c.execute(f"SELECT shows.name,shows.genre,shows.imdb_rating from shows where shows.genre = '{gen}' order by user_rating,imdb_rating")
+# 	sho1_data = c.fetchall()
+
+# 	c.execute(f"SELECT shows.name,shows.genre,shows.imdb_rating from shows where shows.cast_1 = '{actor}' or shows.cast_2 = '{actor}' or shows.cast_3 = '{actor}' or shows.cast_4 = '{actor}' or shows.cast_5 = '{actor}' or shows.cast_6 = '{actor} order by user_rating,imdb_rating'")
+# 	sho2_data = c.fetchall()
+
+# 	c.execute(f"SELECT shows.name,shows.genre,shows.imdb_rating from shows where shows.director = '{dire}' order by user_rating,imdb_rating")
+# 	sho3_data = c.fetchall()
+
+# 	conn.close()
+
+# 	return data
 
 
 
 
+def create_trigger_show():
+
+	conn, cur = connect()
+
+	cur.execute('''CREATE trigger update_show_rating
+				   
+				   after INSERT
+				   on feedback
+				   WHEN NEW.movie_id == 'NA'
+				   
+				   BEGIN	 
+
+						update shows set user_rating = (select avg(rating) from feedback where show_id = new.show_id) where id = new.show_id;
+
+				   END;
+
+				''')
+
+	conn.commit()
+	conn.close()
 
 
 
