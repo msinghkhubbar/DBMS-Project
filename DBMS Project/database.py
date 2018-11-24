@@ -282,16 +282,17 @@ def watchlist_submit(eid,idd):
 	name_s = c.fetchall()
 	print(name_s)
 	print(name_m)
-	if(idd[0] == 'M'):
-		c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,None,str(name_m),None])
-
-	if(idd[0] == 'S'):
-		c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,None,idd,None,str(name_s)])
-	
+	c.execute(f"select * from watchlist where email_id = '{eid}' and movie_id = '{idd}' or show_id = '{idd}'")
+	data1 = c.fetchall()
+	if not data1:
+		if(idd[0] == 'M'):
+			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,None,str(name_m),None])
+		if(idd[0] == 'S'):
+			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,None,idd,None,str(name_s)])
 	conn.commit()
 	conn.close()
 	
-
+watchlist_submit('djyo54@gmail.com','M0001')
 	# conn.commit()
 	# conn.close()
 
@@ -431,22 +432,19 @@ def show_shows_view():
 Triggers
 '''
 
-def create_trigger():
+def create_trigger_show():
 
 	conn, cur = connect()
 
-	cur.execute('''CREATE trigger add_books_to_inDemand 
+	cur.execute('''CREATE trigger update_show_rating
 				   
-				   after UPDATE 
-				   on bookhub
-				   WHEN NEW.quantity == 0
+				   after INSERT
+				   on feedback
+				   WHEN NEW.movie_id == 'NA'
 				   
 				   BEGIN	 
 
-						insert into in_demand values(new.id, new.book_name, new.author, 
-						new.stream, new.cost, new.quantity, new.sold_price, new.usn);
-
-						delete from bookhub where id = new.id;
+						update shows set user_rating = (select avg(rating) from feedback where show_id = new.show_id) where id = new.show_id;
 
 				   END;
 
@@ -455,7 +453,42 @@ def create_trigger():
 	conn.commit()
 	conn.close()
 
+def create_trigger_movie():
+
+	conn, cur = connect()
+
+	cur.execute('''CREATE trigger update_movie_rating
+				   
+				   after INSERT
+				   on feedback
+				   WHEN NEW.show_id == 'NA'
+				   
+				   BEGIN	 
+
+						update movies set user_rating = (select avg(rating) from feedback where movie_id = new.movie_id) where id = new.movie_id;
+
+				   END;
+
+				''')
+
+	conn.commit()
+	conn.close()
+
+# create_trigger_show()
+# create_trigger_movie()
 #==============================================================================================================
+def recommend(uid,idd,actor):
+	conn, cur = connect()
+
+	cur.execute('SELECT * from show_movies')
+	data = cur.fetchall()
+	conn.close()
+
+	for r in data:
+		print(r)
+
+	return data
+
 
 
 
