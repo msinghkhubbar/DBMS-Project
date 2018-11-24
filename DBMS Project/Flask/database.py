@@ -39,6 +39,8 @@ def create_table_feedback():
 def create_table_streams():
 	c.execute('CREATE TABLE IF NOT EXISTS streams(stream_id varchar(12) primary key,user_id varchar(12),movie_id varchar(12),show_id varchar(12),foreign key(user_id) references accounts(username),foreign key(movie_id) references movies(id),foreign key(show_id) references shows(id));')
 
+def create_table_recommend():
+	c.execute('CREATE TABLE IF NOT EXISTS recommend(movie_name varchar(50), show_name varchar(50))')
 
 #======================================================================================================================================
 #insert_queries
@@ -92,6 +94,13 @@ def select_all_shows():   #selects info of all shows
 	data = c.fetchall()
 	conn.close()
 	return data
+
+def select_rec():   
+	conn, c = connect()
+	c.execute("select * from recommendation ;")
+	data = c.fetchall()
+	conn.close()
+	return data	
 
 
 #===============================================================================================================================
@@ -169,6 +178,7 @@ def select_service_shows(service = 'null'):
 	# for i in data:
 	# 	print(i)
 	return data	
+
 #=====================================================================================================================================
 #show selection queries
 #same doubt as movies
@@ -317,11 +327,11 @@ def watchlist_display(eid):
 # table creation functions
 
 
-# conn,c = connect()
-# # create_table_feedback()
-# create_table_watchlist()
-# conn.commit()
-# conn.close()
+conn,c = connect()
+# create_table_feedback()
+create_table_recommend()
+conn.commit()
+conn.close()
 # create_table_accounts()
 # create_table_movies()
 # create_table_shows()
@@ -507,20 +517,24 @@ def create_trigger_movie():
 
 
 
-def create_trigger_show():
+def create_trigger_rec_mov():
 
-	conn, cur = connect()
+	conn, c = connect()
 
-	cur.execute('''CREATE trigger update_show_rating
+	c.execute('''CREATE trigger mov_rec
 				   
 				   after INSERT
-				   on feedback
-				   WHEN NEW.movie_id == 'NA'
+				   on watchlist
+				   when NEW.show_id is None
 				   
-				   BEGIN	 
-
-						update shows set user_rating = (select avg(rating) from feedback where show_id = new.show_id) where id = new.show_id;
-
+				   
+				   BEGIN
+				   		delete from recommend;
+						insert into recommend values((select name from movies where genre = (select genre from movies where movies.id = NEW.movie_id)),None);	
+						insert into recommend values((select name from movies where cast_1 = (select cast_1 from movies where movies.id = NEW.movie_id)),None);	
+						insert into recommend values((select name from movies where director = (select director from movies where movies.id = NEW.movie_id)),None);	
+						-- select * from recommend;
+				   
 				   END;
 
 				''')
@@ -530,10 +544,30 @@ def create_trigger_show():
 
 
 
+def create_trigger_rec_sho():
 
+	conn, c = connect()
 
+	c.execute('''CREATE trigger sho_rec
+				   
+				   after INSERT
+				   on watchlist
+				   when NEW.movie_id is None
+				   
+				   
+				   BEGIN
+				   		delete from recommend;
+						insert into recommend values(None,(select name from shows where genre = (select genre from shows where shows.id = NEW.showsid)));	
+						insert into recommend values(None,(select name from shows where cast_1 = (select cast_1 from shows where shows.id = NEW.showsid)));	
+						insert into recommend values(None,(select name from shows where director = (select director from shows where shows.id = NEW.showsid)));	
+						-- select * from recommend;
+				   
+				   END;
 
+				''')
 
+	conn.commit()
+	conn.close()	
 
 
 #==============================================================================================================
