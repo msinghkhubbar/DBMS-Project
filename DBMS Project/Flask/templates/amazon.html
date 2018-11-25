@@ -76,11 +76,27 @@
 			{% endfor %}
 		</table>
 	</div>
+
+	
 	<div>
 		<h1>SHOWS</h1>
 		<table>
+		<tr>
+				<th>NAME</th>
+				<th>GENRE</th>
+				<th>DIRECTOR</th>
+				<th>IMDb</th>
+				<th>CAST 1</th>
+				<th>CAST 2</th>
+				<th>STARTED AIRING</th>
+				<th>SEASONS</th>
+			</tr>
+		
 			{% for item in data2 %}
+			 {% set idd=item[0] %} 
 				<tr>
+					<form class = "form" action="\feedback" method="POST">
+					<td>{{ idd }}</td> 
 					<td>{{ item[1] }}</td>
 					<td>{{ item[4] }}</td>
 					<td>{{ item[13] }}</td>
@@ -89,10 +105,18 @@
 					<td>{{ item[8] }}</td>
 					<td>{{ item[14] }}</td>
 					<td>{{ item[16] }}</td>
+					<td><button required name="1" class="btn btn-primary my-1" placeholder="Feedback"  method = 'POST' value="{{idd}}" >FEEDBACK</button></td>
 					<!-- <td><button type="submit" class="btn btn-primary my-1" method = 'POST'>Feedback</button></td> -->
+					</form>
+					<form class="form" action="\watchlist" method="POST">
+						<td><button required name="2" class="btn btn-primary my-1" placeholder="Add to Watchlist"  method = 'POST' value="{{idd}}" >ADD TO WATCHLIST</button></td>
+					</form>
+
+				</form>
 				</tr>
 			{% endfor %}
-			<tr>{{ data3 }}</tr>
+
+			<!-- <tr>{{ data3 }}</tr> -->
 		</table>
 	</div>
 {% endblock content %}
