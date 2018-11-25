@@ -30,7 +30,7 @@ def create_table_shows():
 	c.execute('CREATE TABLE IF NOT EXISTS shows(id varchar(12), name varchar(50) not null, nickname varchar(10), service varchar(15) not null, genre varchar(15) not null,imdb_rating decimal(2,2) not null,user_rating decimal(2,2),cast_1 varchar(50) not null,cast_2 varchar(50) not null,cast_3 varchar(50),cast_4 varchar(50),cast_5 varchar(50),cast_6 varchar(50),director varchar(50) not null,start_year int(4) not null,end_year varchar(8) not null,seasons int(3) not null,primary key(id))')
 
 def create_table_watchlist():
-	c.execute('CREATE TABLE IF NOT EXISTS watchlist(email_id varchar(12) not null, movie_id varchar(12), show_id varchar(12), movie_name varchar(50) ,show_name varchar(50),CONSTRAINT uniq UNIQUE(email_id,movie_id,show_id),FOREIGN KEY(email_id) REFERENCES accounts(email_id) on update cascade,FOREIGN KEY(movie_id) REFERENCES movies(id) on update cascade,FOREIGN KEY(show_id) REFERENCES shows(id) on update cascade )')
+	c.execute('CREATE TABLE IF NOT EXISTS watchlist(email_id varchar(12) not null, movie_id varchar(12), show_id varchar(12), movie_name varchar(50) ,show_name varchar(50),CONSTRAINT uniq UNIQUE(email_id,movie_id,show_id),FOREIGN KEY(email_id) REFERENCES accounts(email_id) on update cascade)')
 
 
 def create_table_feedback():
@@ -97,7 +97,7 @@ def select_all_shows():   #selects info of all shows
 
 def select_rec():   
 	conn, c = connect()
-	c.execute("select * from recommendation ;")
+	c.execute("select * from recommend ;")
 	data = c.fetchall()
 	conn.close()
 	return data	
@@ -296,13 +296,13 @@ def watchlist_submit(eid,idd):
 	data1 = c.fetchall()
 	if not data1:
 		if(idd[0] == 'M'):
-			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,None,str(name_m),None])
+			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,'NA',str(name_m),'NA'])
 		if(idd[0] == 'S'):
-			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,None,idd,None,str(name_s)])
+			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,'NA',idd,'NA',str(name_s)])
 	conn.commit()
 	conn.close()
 	
-watchlist_submit('djyo54@gmail.com','M0001')
+
 	# conn.commit()
 	# conn.close()
 
@@ -327,11 +327,11 @@ def watchlist_display(eid):
 # table creation functions
 
 
-conn,c = connect()
-# create_table_feedback()
-create_table_recommend()
-conn.commit()
-conn.close()
+# conn,c = connect()
+# create_table_watchlist()
+# #create_table_recommend()
+# conn.commit()
+# conn.close()
 # create_table_accounts()
 # create_table_movies()
 # create_table_shows()
@@ -520,19 +520,19 @@ def create_trigger_movie():
 def create_trigger_rec_mov():
 
 	conn, c = connect()
-
+	
 	c.execute('''CREATE trigger mov_rec
 				   
 				   after INSERT
 				   on watchlist
-				   when NEW.show_id is None
+				   when NEW.show_id='NA'
 				   
 				   
 				   BEGIN
 				   		delete from recommend;
-						insert into recommend values((select name from movies where genre = (select genre from movies where movies.id = NEW.movie_id)),None);	
-						insert into recommend values((select name from movies where cast_1 = (select cast_1 from movies where movies.id = NEW.movie_id)),None);	
-						insert into recommend values((select name from movies where director = (select director from movies where movies.id = NEW.movie_id)),None);	
+						insert into recommend values((select name from movies where genre = (select genre from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
+						insert into recommend values((select name from movies where cast_1 = (select cast_1 from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
+						insert into recommend values((select name from movies where director = (select director from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
 						-- select * from recommend;
 				   
 				   END;
@@ -547,19 +547,20 @@ def create_trigger_rec_mov():
 def create_trigger_rec_sho():
 
 	conn, c = connect()
+	
 
 	c.execute('''CREATE trigger sho_rec
 				   
 				   after INSERT
 				   on watchlist
-				   when NEW.movie_id is None
+				   when NEW.movie_id='NA'
 				   
 				   
 				   BEGIN
 				   		delete from recommend;
-						insert into recommend values(None,(select name from shows where genre = (select genre from shows where shows.id = NEW.showsid)));	
-						insert into recommend values(None,(select name from shows where cast_1 = (select cast_1 from shows where shows.id = NEW.showsid)));	
-						insert into recommend values(None,(select name from shows where director = (select director from shows where shows.id = NEW.showsid)));	
+						insert into recommend values('NA',(select name from shows where genre = (select genre from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
+						insert into recommend values('NA',(select name from shows where cast_1 = (select cast_1 from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
+						insert into recommend values('NA',(select name from shows where director = (select director from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
 						-- select * from recommend;
 				   
 				   END;
@@ -569,5 +570,15 @@ def create_trigger_rec_sho():
 	conn.commit()
 	conn.close()	
 
+# create_trigger_rec_mov()
+# create_trigger_rec_sho()
 
+# conn, c = connect()
+# # c.execute(f"drop trigger sho_rec")
+# # c.execute(f"drop trigger mov_rec")
+# create_trigger_rec_mov()
+# create_trigger_rec_sho()
+# conn.commit()
+# conn.close()	
+	
 #==============================================================================================================
