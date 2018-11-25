@@ -220,12 +220,12 @@ def watchlist():
 	if (request.method == 'POST'):
 		idd = request.form['2']
 		watchlist_submit(logged_user,idd)           
-		# rec_submit(idd)                                         #error not detected,shouldnt display in case of an integrity error,just flash a message
+		rec_submit(idd)                                         #error not detected,shouldnt display in case of an integrity error,just flash a message
 		data1,data2 = watchlist_display(logged_user)
 		print(data1)
 		print(data2)
-		# data3 = select_rec()
-	return render_template("watchlist.html", data1=data1, data2=data2, logged_user = logged_user)
+		data3 = select_rec()
+	return render_template("watchlist.html", data1=data1, data2=data2, data3=data3, logged_user = logged_user)
 
 
 
