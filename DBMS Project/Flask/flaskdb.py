@@ -216,13 +216,36 @@ def watchlist():
 	global logged_user
 	data1=()
 	data2=()
+	data3=()
 	if (request.method == 'POST'):
 		idd = request.form['2']
-		watchlist_submit(logged_user,idd)                 #error not detected,shouldnt display in case of an integrity error,just flash a message
+		watchlist_submit(logged_user,idd)           
+		# rec_submit(idd)                                         #error not detected,shouldnt display in case of an integrity error,just flash a message
 		data1,data2 = watchlist_display(logged_user)
 		print(data1)
 		print(data2)
-	return render_template("watchlist.html", data1=data1, data2=data2,logged_user = logged_user)
+		# data3 = select_rec()
+	return render_template("watchlist.html", data1=data1, data2=data2, logged_user = logged_user)
+
+
+
+@app.route("/recommend")
+def recommend():	
+	global idd
+	global logged_user
+	data3 = ()
+	rec_submit(idd) 
+	# data2=()
+	 # if (request.method == 'POST'):
+	# 	idd = request.form['2']
+	# 	watchlist_submit(logged_user,idd)                 #error not detected,shouldnt display in case of an integrity error,just flash a message
+	data3 = select_rec()
+
+	# 	print(data1)
+	# 	print(data2)
+	return render_template("recommend.html", data3=data3, logged_user = logged_user)
+
+
 
 @app.route("/watchlistDisplay")
 def watchlistDisplay():	
@@ -266,13 +289,6 @@ def login():
 	else:		
 		return render_template('login.html', title='Login', form=form, user=logged_user)
 
-@app.route("/recommenations")
-def login():
-	global logged_user
-	passw = ''
-	
-			
-		return render_template('recommendation.html', title='Login', form=form, user=logged_user)
 
 
 

@@ -18,6 +18,7 @@ def connect():
 	return conn,c
 
 conn,c = connect()
+
 #=================================================================================================================================
 #create tables	
 def create_table_accounts():
@@ -97,10 +98,82 @@ def select_all_shows():   #selects info of all shows
 
 def select_rec():   
 	conn, c = connect()
-	c.execute("select * from recommend ;")
+	c.execute("select distinct * from recommend ;")
 	data = c.fetchall()
 	conn.close()
 	return data	
+
+#=====================================================================================================================
+#insert into recommendation	
+
+def rec_submit(idd):      
+	conn, cur = connect()
+	data1 = ()
+	data2 = ()
+	data3 = ()
+	data4 = ()
+	data5 = ()
+	data6 = ()
+
+	cur.execute(f"select genre from movies where movies.id = '{idd}';")
+	genre1 = cur.fetchall()
+	
+	cur.execute(f"select cast_1 from movies where movies.id = '{idd}';")
+	actor1 = cur.fetchall()
+	
+	cur.execute(f"select director from movies where movies.id = '{idd}';")
+	direc1 = cur.fetchall()
+
+	cur.execute(f"select name from movies where genre = '{genre1[0][0]}' and id != '{idd}';")
+	data1 = cur.fetchall()
+	cur.execute(f"select name from movies where cast_1 = '{actor1[0][0]}' and id != '{idd}' ;")
+	data2 = cur.fetchall()
+	cur.execute(f"select name from movies where director = '{direc1[0][0]}' and id != '{idd}'; ")
+	data3 = cur.fetchall()
+
+	
+	insert_qu1 = f"'insert into recommend values (?, ?)',[item,'NA'] "
+	
+	
+	for item in data1:
+		cur.execute('insert into recommend values (?, ?)', [item[0] ,'NA'])
+	for item in data2:
+		cur.execute('insert into recommend values (?, ?)' [item[0] ,'NA'])
+	for item in data3:
+		cur.execute('insert into recommend values (?, ?)', [item[0] ,'NA'])
+
+	
+	# cur.execute(f"select genre from shows where id = '{idd}';")
+	# genre2 = cur.fetchall()
+	# cur.execute(f"select cast_1 from shows where id = '{idd}';")
+	# actor2 = cur.fetchall()
+	# cur.execute(f"select director from shows where id = '{idd}';")
+	# direc2 = cur.fetchall()
+
+	# cur.execute(f"select name from shows where genre = '{genre2[0][0]}' and id != '{idd}';")
+	# data4 = cur.fetchall()
+	# cur.execute(f"select name from shows where cast_1 = '{actor2[0][0]}' and id != '{idd}' ;")
+	# data5 = cur.fetchall()
+	# cur.execute(f"select name from shows where director = '{direc2[0][0]}' and id != '{idd}'; ")
+	# data6 = cur.fetchall()
+
+	
+	# insert_qu2 = f"'insert into recommend values (?, ?)',['NA', item] "
+	
+	
+	# for item in data4:
+	# 	c.execute('insert into recommend values (?, ?)', ['NA',item])
+	# for item in data5:
+	# 	c.execute('insert into recommend values (?, ?)', ['NA',item])
+	# for item in data6:
+	# 	c.execute('insert into recommend values (?, ?)', ['NA',item])
+
+
+	conn.commit()
+	conn.close()
+	
+	
+
 
 
 #===============================================================================================================================
@@ -356,7 +429,7 @@ def watchlist_display(eid):
 # insert_movies('M0001','Central Intelligence','null','Netflix','Comedy',6.3,0.0,'Dwayne Johnson','Kevin Hart','Amy Ryan','null','null','null','Rawson Marshall Thurber',2016,107)
 # insert_movies('M0002','Love Per Square Foot','null','Netflix','Romantic comedy',7.3,0.0,'Vicky Kaushal','Angira Dhar','Alankrita Sahai','Ratna Pathak','Supriya Pathak','Brijendra Kala','Anand Tiwari',2018,133)
 # insert_movies('M0003','Newton','null','Amazon Prime Video','Drama',7.8,0.0,'Rajkummar Rao','Pankaj Tripathi','Anjali Patil','null','null','null','Amit Masurkar',2017,106)
-# insert_movies('M0004','Sixteen Candles','null','Netflix','Romatic comedy',7.1,0.0,'Molly Ringwald','Justin Henry','Michael Schoeffling','Haviland Morris','Gedde Watanabe','Anthony Michael Hall','John Hughes',1984,93)
+# insert_movies('M0005','ABCD','null','Netflix','Romatic comedy',7.2,0.0,'PQRS','Justin Henry','Michael Schoeffling','Haviland Morris','Gedde Watanabe','Anthony Michael Hall','John Hughes',1984,93)
 
 
 #===========================================================================================================
@@ -529,11 +602,12 @@ def create_trigger_rec_mov():
 				   
 				   
 				   BEGIN
-				   		delete from recommend;
+						delete from recommend;
 						insert into recommend values((select name from movies where genre = (select genre from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
 						insert into recommend values((select name from movies where cast_1 = (select cast_1 from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
 						insert into recommend values((select name from movies where director = (select director from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
 						-- select * from recommend;
+						delete from recommend where movie_name = NEW.movie_name;
 				   
 				   END;
 
@@ -557,11 +631,12 @@ def create_trigger_rec_sho():
 				   
 				   
 				   BEGIN
-				   		delete from recommend;
+						delete from recommend;
 						insert into recommend values('NA',(select name from shows where genre = (select genre from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
 						insert into recommend values('NA',(select name from shows where cast_1 = (select cast_1 from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
 						insert into recommend values('NA',(select name from shows where director = (select director from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
 						-- select * from recommend;
+						delete from recommend where show_name = NEW.show_name;
 				   
 				   END;
 
@@ -574,11 +649,13 @@ def create_trigger_rec_sho():
 # create_trigger_rec_sho()
 
 # conn, c = connect()
-# # c.execute(f"drop trigger sho_rec")
-# # c.execute(f"drop trigger mov_rec")
-# create_trigger_rec_mov()
-# create_trigger_rec_sho()
+# c.execute(f"drop trigger sho_rec")
+# c.execute(f"drop trigger mov_rec")
+# # create_trigger_rec_mov()
+# # create_trigger_rec_sho()
 # conn.commit()
 # conn.close()	
+conn.commit()
+conn.close()	
 	
 #==============================================================================================================
