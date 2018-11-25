@@ -114,7 +114,9 @@ def rec_submit(idd):
 	data4 = ()
 	data5 = ()
 	data6 = ()
-
+	
+	cur.execute(f"delete from recommend;")
+	
 	cur.execute(f"select genre from movies where movies.id = '{idd}';")
 	genre1 = cur.fetchall()
 	
