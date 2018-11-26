@@ -7,52 +7,37 @@
 		<a href="{{ url_for('amazon_name') }}">Search by name</a>
 		<form class="form" action="/amazon" method="POST">
 			<div class="form-group mx-sm-3 mb-2">
+			  	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Actor</label>
+		      	<input class="form-control form-control-lg" type="text" placeholder="Actor" value = 'null' required name="actor">
 
-				<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Actor</label>
-			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="actor" style="margin-right: 85px">
-			    	<option value="null">NULL</option>
-			   		<option value="Brad Pitt">Brad Pitt</option>
-			    	<option value="Dwayne Johnson">Dwayne Johnson</option>
-			    	<option value="Rajkummar Rao">Rajkummar Rao</option>
-			    	<option value="Amy Ryan">Amy Ryan</option>
-			  	</select>
-			  	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Director</label>
-			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="director" style="margin-right:85px">
-			    	<option value="null">NULL</option>
-			   		<option value="Tarantino">Tarantino</option>
-			    	<option value="Rawson Marshall Thurber">Rawson Marshall Thurber</option>
-			    	<option value="Amit Masurkar">Amit Masurkar</option>
-			  	</select>
-			  	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Genre</label>
-			  	<select class="custom-select my-1" id="inlineFormCustomSelectPref"required name="genre"  style="margin-right: 85px">
-			    	<option value="null">NULL</option>
-			   		<option value="Action">Action</option>
-			    	<option value="Comedy">Comedy</option>
-			    	<option value="Drama">Drama</option>
-			  	</select>
-			  	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Year</label>
-			  		<select class="custom-select my-1" id="inlineFormCustomSelectPref" required name="year" style="margin-right: 85px">
-			    	<option value="null">0</option>
-			   		<option value="2013">2013</option>
-			    	<option value="2016">2016</option>
-			    	<option value="2017">2017</option>
-			  	</select>
+             	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Director</label>
+		      	<input class="form-control form-control-lg" type="text" placeholder="Director" value = 'null' required name="director">
+
+		      	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Genre</label>
+		      	<input class="form-control form-control-lg" type="text" placeholder="Genre" value = 'null' required name="genre">
+		      	
+		      	<label class="my-1 mr-2" for="inlineFormCustomSelectPref">Year</label>
+		      	<input class="form-control form-control-lg" type="text" placeholder="Year" value = 'null' required name="year">
+			  	
 			  	<button type="submit" class="btn btn-primary my-1" method = 'POST'>Submit</button>
 		  	</div>
 		</form>	
 	</div>
 	<div>
 		<h1>MOVIES</h1>
-		<table>
-			<tr>
-				<th>NAME</th>
-				<th>GENRE</th>
-				<th>DIRECTOR</th>
-				<th>IMDb</th>
-				<th>CAST 1</th>
-				<th>CAST 2</th>
-				<th>YEAR</th>
-			</tr>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th>ID</th>
+					<th>NAME</th>
+					<th>GENRE</th>
+					<th>DIRECTOR</th>
+					<th>IMDb</th>
+					<th>CAST 1</th>
+					<th>CAST 2</th>
+					<th>YEAR</th>
+				</tr>
+			</thead>
 			{% for item in data1 %}
 			<!-- {% set movie_name=item[1] %} -->
 			 {% set idd=item[0] %} 
@@ -80,17 +65,20 @@
 	
 	<div>
 		<h1>SHOWS</h1>
-		<table>
-		<tr>
-				<th>NAME</th>
-				<th>GENRE</th>
-				<th>DIRECTOR</th>
-				<th>IMDb</th>
-				<th>CAST 1</th>
-				<th>CAST 2</th>
-				<th>STARTED AIRING</th>
-				<th>SEASONS</th>
-			</tr>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th>ID</th>
+					<th>NAME</th>
+					<th>GENRE</th>
+					<th>DIRECTOR</th>
+					<th>IMDb</th>
+					<th>CAST 1</th>
+					<th>CAST 2</th>
+					<th>STARTED AIRING</th>
+					<th>SEASONS</th>
+				</tr>
+			</thead>
 		
 			{% for item in data2 %}
 			 {% set idd=item[0] %} 
