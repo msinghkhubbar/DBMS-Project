@@ -123,25 +123,40 @@ def rec_submit(idd):
 	data4 = ()
 	data5 = ()
 	data6 = ()
-
 	# cur.execute(f"delete from recommend;")
-
-	cur.execute(f"select genre from movies where movies.id = '{idd}';")
-	genre1 = cur.fetchall()
+	if idd[0]=='M':
+		cur.execute(f"select genre from movies where movies.id = '{idd}';")
+		genre1 = cur.fetchall()
+		
+		cur.execute(f"select cast_1 from movies where movies.id = '{idd}';")
+		actor1 = cur.fetchall()
+		
+		cur.execute(f"select director from movies where movies.id = '{idd}';")
+		direc1 = cur.fetchall()
+	else:
+		cur.execute(f"select genre from shows where shows.id = '{idd}';")
+		genre1 = cur.fetchall()
+		
+		cur.execute(f"select cast_1 from shows where shows.id = '{idd}';")
+		actor1 = cur.fetchall()
+		
+		cur.execute(f"select director from shows where shows.id = '{idd}';")
+		direc1 = cur.fetchall()
 	
-	cur.execute(f"select cast_1 from movies where movies.id = '{idd}';")
-	actor1 = cur.fetchall()
-	
-	cur.execute(f"select director from movies where movies.id = '{idd}';")
-	direc1 = cur.fetchall()
-
-	cur.execute(f"select name from movies where genre = '{genre1[0][0]}' and id != '{idd}';")
-	data1 = cur.fetchall()
-	cur.execute(f"select name from movies where cast_1 = '{actor1[0][0]}' and id != '{idd}' ;")
-	data2 = cur.fetchall()
-	cur.execute(f"select name from movies where director = '{direc1[0][0]}' and id != '{idd}'; ")
-	data3 = cur.fetchall()
-
+	if idd[0]=='M':
+		cur.execute(f"select name from movies where genre = '{genre1[0][0]}' and id != '{idd}';")
+		data1 = cur.fetchall()
+		cur.execute(f"select name from movies where cast_1 = '{actor1[0][0]}' and id != '{idd}' ;")
+		data2 = cur.fetchall()
+		cur.execute(f"select name from movies where director = '{direc1[0][0]}' and id != '{idd}'; ")
+		data3 = cur.fetchall()
+	else:
+		cur.execute(f"select name from shows where genre = '{genre1[0][0]}' and id != '{idd}';")
+		data1 = cur.fetchall()
+		cur.execute(f"select name from shows where cast_1 = '{actor1[0][0]}' and id != '{idd}' ;")
+		data2 = cur.fetchall()
+		cur.execute(f"select name from shows where director = '{direc1[0][0]}' and id != '{idd}'; ")
+		data3 = cur.fetchall()
 	
 	insert_qu1 = f"'insert into recommend values (?, ?)',[item,'NA'] "
 
