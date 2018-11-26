@@ -694,6 +694,7 @@ def movies_view():
 				genre,
 				director,
 				imdb_rating,
+				user_rating,
 				cast_1,
 				cast_2,
 				release_year
@@ -714,6 +715,7 @@ def shows_view():
 				genre,
 				director,
 				imdb_rating,
+				user_rating,
 				cast_1,
 				cast_2,
 				start_year as 'from',
@@ -723,12 +725,14 @@ def shows_view():
 	conn.commit()
 	conn.close()
 
-# conn, cur = connect()
-# movies_view()
-# shows_view()	
-# conn.commit() #commit the current transaction		
-# # c.close()   #close the cursor
-# conn.close() 
+conn, cur = connect()
+cur.execute(f'drop view show_movies ;')
+cur.execute(f'drop view show_shows ;')
+movies_view()
+shows_view()	
+conn.commit() #commit the current transaction		
+# c.close()   #close the cursor
+conn.close() 
 
 
 def show_movies_view():
@@ -903,7 +907,7 @@ def create_trigger_rec_sho():
 # # create_trigger_rec_sho()
 # conn.commit()
 # conn.close()	
-conn.commit()
-conn.close()	
+# conn.commit()
+# conn.close()	
 	
 #==============================================================================================================

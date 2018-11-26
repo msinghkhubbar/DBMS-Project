@@ -286,7 +286,7 @@ def login():
 			flash('Login unsuccesful. Please check email or password', 'danger')
 			return render_template('login.html', title='Login', form=form)
 	else:		
-		return render_template('login.html', title='Login', form=form, user=logged_user)
+		return render_template('login.html', title='Login', form=form)
 
 
 
