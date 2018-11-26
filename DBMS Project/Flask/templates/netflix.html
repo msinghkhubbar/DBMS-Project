@@ -22,7 +22,7 @@
 			  	<button type="submit" class="btn btn-primary my-1" method = 'POST'>Submit</button>
 		  	</div>
 		</form>	
-	</div>
+	</div> 
 	<div>
 		<h1>MOVIES</h1>
 		<table class="table">
@@ -33,6 +33,7 @@
 					<th>GENRE</th>
 					<th>DIRECTOR</th>
 					<th>IMDb</th>
+					<th>USER_RATING</th>
 					<th>CAST 1</th>
 					<th>CAST 2</th>
 					<th>YEAR</th>
@@ -48,6 +49,7 @@
 						<td>{{ item[4] }}</td>
 						<td>{{ item[13] }}</td>
 						<td>{{ item[5] }}</td>
+						<td>{{  item[6] }}</td>
 						<td>{{ item[7] }}</td>
 						<td>{{ item[8] }}</td>
 						<td>{{ item[14] }}</td>
@@ -73,6 +75,7 @@
 					<th>GENRE</th>
 					<th>DIRECTOR</th>
 					<th>IMDb</th>
+					<th>USER_RATING</th>
 					<th>CAST 1</th>
 					<th>CAST 2</th>
 					<th>STARTED AIRING</th>
@@ -89,6 +92,7 @@
 					<td>{{ item[4] }}</td>
 					<td>{{ item[13] }}</td>
 					<td>{{ item[5] }}</td>
+					<td>{{  item[6] }}</td>
 					<td>{{ item[7] }}</td>
 					<td>{{ item[8] }}</td>
 					<td>{{ item[14] }}</td>
@@ -107,6 +111,7 @@
 			<!-- <tr>{{ data3 }}</tr> -->
 		</table>
 	</div>
+
 {% endblock content %}
 
 
