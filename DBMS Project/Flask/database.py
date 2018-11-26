@@ -72,6 +72,15 @@ def check_login(email):
 	data = c.fetchall()
 	conn.close()
 	return data[0]
+
+def select_users():   #selects info of all shows
+    conn, c = connect()
+    c.execute("select email_id from accounts")
+    data = c.fetchall()
+    conn.close()
+    result1 = [x[0] for x in data]
+    print(result1)
+    return result1
 #======================================================================================================================================
 #select_all queries
 
@@ -186,18 +195,55 @@ def rec_submit(idd):
 #maybe we will have to write separate functions based on combinations  
 #and then write a separate function that calls the suitable one   
 
-def select_movies_all_cri(genre = 'null',director = 'null', actor = 'null', year = 'null'):
+# def select_movies_all_cri(genre = 'null',director = 'null', actor = 'null', year = 'null'):
+# #this one is for the case where all search criteria are applied  
+# 	conn, c = connect()
+
+# 	que=""
+
+# 	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
+# 		que = "select * from movies"
+
+
+# 	else:
+# 		que = 'select * from movies where '
+# 		if genre != 'null':
+# 			que += f"genre = '{genre}'"
+# 			que += " and "
+# 		if director != 'null':
+# 			que += f"director = '{director}'"
+# 			que += " and "	
+# 		if actor != 'null':
+# 			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+# 			que += " and "
+# 		if year != 'null':
+# 			que += f"release_year = '{year}'"
+
+	
+# 	if que.split()[-1] == "and":
+# 		que = que[0:-5]	
+
+# 	que += f" order by imdb_rating;"
+
+# 	c.execute(que)
+# 	data = c.fetchall()
+# 	conn.commit()
+# 	conn.close()
+# 	return data
+
+
+def select_movies_all_cri_amazon(genre = 'null',director = 'null', actor = 'null', year = 'null'):
 #this one is for the case where all search criteria are applied  
 	conn, c = connect()
 
 	que=""
 
 	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
-		que = "select * from movies"
+		que = "select * from movies where service = 'Prime Video' "
 
 
 	else:
-		que = 'select * from movies where '
+		que = "select * from movies where service = 'Prime Video' and "
 		if genre != 'null':
 			que += f"genre = '{genre}'"
 			que += " and "
@@ -222,87 +268,237 @@ def select_movies_all_cri(genre = 'null',director = 'null', actor = 'null', year
 	conn.close()
 	return data
 
-def select_service_movies(service = 'null'):
-	conn, c = connect()
-
-	if service == 'null':
-		que = "select * from movies;"
-
-	else:
-		que = "select * from movies where service = '{service}' order by imdb_rating;"
-
-	c.execute(que)
-	data = c.fetchall()
-	conn.close()
-	#for i in data:
-	#	print(i)
-	return data	
-
-def select_service_shows(service = 'null'):
-	conn, c = connect()
-
-	if service == 'null':
-		que = "select * from shows;"
-
-	else:
-		que = "select * from shows where service = '{service}' order by imdb_rating; "
-
-	c.execute(que)
-	data = c.fetchall()
-	conn.close()
-	# for i in data:
-	# 	print(i)
-	return data	
-
-#=====================================================================================================================================
-#show selection queries
-#same doubt as movies
-
-def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year = 'null') :
+def select_movies_all_cri_hotstar(genre = 'null',director = 'null', actor = 'null', year = 'null'):
 #this one is for the case where all search criteria are applied  
 	conn, c = connect()
 
+	que=""
 
 	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
-		que = "select * from shows"
+		que = "select * from movies where service = 'Hotstar' "
 
 
 	else:
-		que = 'select * from shows where '
-		if genre != 0:
+		que = "select * from movies where service = 'Hotstar' and "
+		if genre != 'null':
 			que += f"genre = '{genre}'"
 			que += " and "
-		if director != 0:
+		if director != 'null':
 			que += f"director = '{director}'"
-			que += " and "
-		if actor != 0:
+			que += " and "	
+		if actor != 'null':
 			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
 			que += " and "
 		if year != 'null':
-			que += f"'{year}' between start_year and end_year"
+			que += f"release_year = '{year}'"
 
-
+	
 	if que.split()[-1] == "and":
-		que = que[0:-5]		
+		que = que[0:-5]	
 
-	que += f" order by imdb_rating"
-	que += ';'
+	que += f" order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
 	conn.commit()
 	conn.close()
-	# for i in data:
-	# 	print(i)
 	return data
+
+def select_movies_all_cri_netflix(genre = 'null',director = 'null', actor = 'null', year = 'null'):
+#this one is for the case where all search criteria are applied  
+	conn, c = connect()
+
+	que=""
+
+	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
+		que = "select * from movies where service = 'Netflix' "
+
+
+	else:
+		que = "select * from movies where service = 'Netflix' and "
+		if genre != 'null':
+			que += f"genre = '{genre}'"
+			que += " and "
+		if director != 'null':
+			que += f"director = '{director}'"
+			que += " and "	
+		if actor != 'null':
+			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+			que += " and "
+		if year != 'null':
+			que += f"release_year = '{year}'"
+
+	
+	if que.split()[-1] == "and":
+		que = que[0:-5]	
+
+	que += f" order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.commit()
+	conn.close()
+	return data
+
+#==========================================================================================================================	
+
+#=====================================================================================================================================
+#show selection queries
+#same doubt as movies
+
+# def select_shows_all_cri(genre = 'null', director = 'null', actor = 'null', year = 'null') :
+# #this one is for the case where all search criteria are applied  
+# 	conn, c = connect()
+
+
+# 	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
+# 		que = "select * from shows"
+
+
+# 	else:
+# 		que = 'select * from shows where '
+# 		if genre != 0:
+# 			que += f"genre = '{genre}'"
+# 			que += " and "
+# 		if director != 0:
+# 			que += f"director = '{director}'"
+# 			que += " and "
+# 		if actor != 0:
+# 			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+# 			que += " and "
+# 		if year != 'null':
+# 			que += f"'{year}' between start_year and end_year"
+
+
+# 	if que.split()[-1] == "and":
+# 		que = que[0:-5]		
+
+# 	que += f" order by imdb_rating"
+# 	que += ';'
+
+# 	c.execute(que)
+# 	data = c.fetchall()
+# 	conn.commit()
+# 	conn.close()
+# 	# for i in data:
+# 	# 	print(i)
+# 	return data
+
+def select_shows_all_cri_amazon(genre = 'null',director = 'null', actor = 'null', year = 'null'):
+#this one is for the case where all search criteria are applied  
+	conn, c = connect()
+
+	que=""
+
+	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
+		que = "select * from shows where service = 'Prime Video' "
+
+
+	else:
+		que = "select * from shows where service = 'Prime Video' and "
+		if genre != 'null':
+			que += f"genre = '{genre}'"
+			que += " and "
+		if director != 'null':
+			que += f"director = '{director}'"
+			que += " and "	
+		if actor != 'null':
+			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+			que += " and "
+		if year != 'null':
+			que += f"'{year}' between start_year and end_year"
+
+	
+	if que.split()[-1] == "and":
+		que = que[0:-5]	
+
+	que += f" order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.commit()
+	conn.close()
+	return data
+
+def select_shows_all_cri_hotstar(genre = 'null',director = 'null', actor = 'null', year = 'null'):
+#this one is for the case where all search criteria are applied  
+	conn, c = connect()
+
+	que=""
+
+	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
+		que = "select * from shows where service = 'Hotstar' "
+
+
+	else:
+		que = "select * from shows where service = 'Hotstar' and "
+		if genre != 'null':
+			que += f"genre = '{genre}'"
+			que += " and "
+		if director != 'null':
+			que += f"director = '{director}'"
+			que += " and "	
+		if actor != 'null':
+			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+			que += " and "
+		if year != 'null':
+			que += f"'{year}' between start_year and end_year"
+
+	
+	if que.split()[-1] == "and":
+		que = que[0:-5]	
+
+	que += f" order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.commit()
+	conn.close()
+	return data
+
+def select_shows_all_cri_netflix(genre = 'null',director = 'null', actor = 'null', year = 'null'):
+#this one is for the case where all search criteria are applied  
+	conn, c = connect()
+
+	que=""
+
+	if genre == 'null' and actor == 'null' and director == 'null' and year == 'null':
+		que = "select * from shows where service = 'Netflix' "
+
+
+	else:
+		que = "select * from shows where service = 'Netflix' and "
+		if genre != 'null':
+			que += f"genre = '{genre}'"
+			que += " and "
+		if director != 'null':
+			que += f"director = '{director}'"
+			que += " and "	
+		if actor != 'null':
+			que += f"cast_1 = '{actor}' or cast_2 = '{actor}' or cast_3 = '{actor}' or cast_4 = '{actor}' or cast_5 = '{actor}' or cast_6 = '{actor}'"
+			que += " and "
+		if year != 'null':
+			que += f"'{year}' between start_year and end_year"
+
+	
+	if que.split()[-1] == "and":
+		que = que[0:-5]	
+
+	que += f" order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.commit()
+	conn.close()
+	return data	
 
 
 
 #==============================================================================================================
 #Search By Name
-def select_show_name(name):
+def select_show_name_netflix(name):
 	conn, c = connect()
-	que = f"select * from show_shows where name = '{name}' or nickname = '{name}' order by imdb_rating;"
+	que = f"select * from show_shows where service = 'Netflix' and name = '{name}' or nickname = '{name}' order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
@@ -312,9 +508,9 @@ def select_show_name(name):
 	return data
 
 
-def select_movie_name(name):
+def select_movie_name_netflix(name):
 	conn, c = connect()
-	que = f"select * from show_movies where name = '{name}' or nickname = '{name}' order by imdb_rating;"
+	que = f"select * from show_movies where service = 'Netflix' and name = '{name}' or nickname = '{name}' order by imdb_rating;"
 
 	c.execute(que)
 	data = c.fetchall()
@@ -322,6 +518,52 @@ def select_movie_name(name):
 	# for i in data:
 	# 	print(i)
 	return data
+
+def select_show_name_amazon(name):
+	conn, c = connect()
+	que = f"select * from show_shows where service = 'Prime Video' and name = '{name}' or nickname = '{name}' order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	# for i in data:
+	# 	print(i)
+	return data
+
+
+def select_movie_name_amazon(name):
+	conn, c = connect()
+	que = f"select * from show_movies where service = 'Prime Video' and name = '{name}' or nickname = '{name}' order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	# for i in data:
+	# 	print(i)
+	return data	
+
+def select_show_name_hotstar(name):
+	conn, c = connect()
+	que = f"select * from show_shows where service = 'Hotstar' and name = '{name}' or nickname = '{name}' order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	# for i in data:
+	# 	print(i)
+	return data
+
+
+def select_movie_name_hotstar(name):
+	conn, c = connect()
+	que = f"select * from show_movies where service = 'Hotstar' and name = '{name}' or nickname = '{name}' order by imdb_rating;"
+
+	c.execute(que)
+	data = c.fetchall()
+	conn.close()
+	# for i in data:
+	# 	print(i)
+	return data		
 
 #=============================================================================================================
 #feedback
@@ -448,6 +690,7 @@ def movies_view():
 	cur.execute('''CREATE VIEW show_movies as SELECT 
 				name,
 				nickname,
+				service,
 				genre,
 				director,
 				imdb_rating,
@@ -467,6 +710,7 @@ def shows_view():
 	cur.execute('''CREATE VIEW show_shows as SELECT 
 				name,
 				nickname,
+				service,
 				genre,
 				director,
 				imdb_rating,
@@ -479,9 +723,11 @@ def shows_view():
 	conn.commit()
 	conn.close()
 
+# conn, cur = connect()
+# movies_view()
 # shows_view()	
 # conn.commit() #commit the current transaction		
-# c.close()   #close the cursor
+# # c.close()   #close the cursor
 # conn.close() 
 
 
