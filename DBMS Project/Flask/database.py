@@ -144,12 +144,11 @@ def rec_submit(idd):
 
 	
 	insert_qu1 = f"'insert into recommend values (?, ?)',[item,'NA'] "
-	
-	
+
 	for item in data1:
 		cur.execute('insert into recommend values (?, ?)', [item[0] ,'NA'])
 	for item in data2:
-		cur.execute('insert into recommend values (?, ?)' [item[0] ,'NA'])
+		cur.execute('insert into recommend values (?, ?)', [item[0] ,'NA'])
 	for item in data3:
 		cur.execute('insert into recommend values (?, ?)', [item[0] ,'NA'])
 
@@ -607,10 +606,12 @@ def watchlist_submit(eid,idd):
 	name_m = c.fetchall()
 	c.execute(na_s)
 	name_s = c.fetchall()
-	print(name_s)
-	print(name_m)
+	print(str(name_s))
+	print(str(name_m))
 	c.execute(f"select * from watchlist where email_id = '{eid}' and movie_id = '{idd}' or show_id = '{idd}'")
 	data1 = c.fetchall()
+	print("hello")
+	print(idd)
 	if not data1:
 		if(idd[0] == 'M'):
 			c.execute('insert into watchlist values (?, ?, ?, ?, ?)',[eid,idd,'NA',str(name_m),'NA'])
@@ -842,60 +843,60 @@ def create_trigger_movie():
 
 
 
-def create_trigger_rec_mov():
+# def create_trigger_rec_mov():
 
-	conn, c = connect()
+# 	conn, c = connect()
 	
-	c.execute('''CREATE trigger mov_rec
+# 	c.execute('''CREATE trigger mov_rec
 				   
-				   after INSERT
-				   on watchlist
-				   when NEW.show_id='NA'
+# 				   after INSERT
+# 				   on watchlist
+# 				   when NEW.show_id='NA'
 				   
 				   
-				   BEGIN
-						delete from recommend;
-						insert into recommend values((select name from movies where genre = (select genre from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
-						insert into recommend values((select name from movies where cast_1 = (select cast_1 from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
-						insert into recommend values((select name from movies where director = (select director from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
-						-- select * from recommend;
-						delete from recommend where movie_name = NEW.movie_name;
+# 				   BEGIN
+# 						delete from recommend;
+# 						insert into recommend values((select name from movies where genre = (select genre from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
+# 						insert into recommend values((select name from movies where cast_1 = (select cast_1 from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
+# 						insert into recommend values((select name from movies where director = (select director from movies where movies.id = NEW.movie_id) and movies.name!=NEW.movie_name),'NA');	
+# 						-- select * from recommend;
+# 						delete from recommend where movie_name = NEW.movie_name;
 				   
-				   END;
+# 				   END;
 
-				''')
+# 				''')
 
-	conn.commit()
-	conn.close()
+# 	conn.commit()
+# 	conn.close()
 
 
 
-def create_trigger_rec_sho():
+# def create_trigger_rec_sho():
 
-	conn, c = connect()
+# 	conn, c = connect()
 	
 
-	c.execute('''CREATE trigger sho_rec
+# 	c.execute('''CREATE trigger sho_rec
 				   
-				   after INSERT
-				   on watchlist
-				   when NEW.movie_id='NA'
+# 				   after INSERT
+# 				   on watchlist
+# 				   when NEW.movie_id='NA'
 				   
 				   
-				   BEGIN
-						delete from recommend;
-						insert into recommend values('NA',(select name from shows where genre = (select genre from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
-						insert into recommend values('NA',(select name from shows where cast_1 = (select cast_1 from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
-						insert into recommend values('NA',(select name from shows where director = (select director from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
-						-- select * from recommend;
-						delete from recommend where show_name = NEW.show_name;
+# 				   BEGIN
+# 						delete from recommend;
+# 						insert into recommend values('NA',(select name from shows where genre = (select genre from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
+# 						insert into recommend values('NA',(select name from shows where cast_1 = (select cast_1 from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
+# 						insert into recommend values('NA',(select name from shows where director = (select director from shows where shows.id = NEW.show_id) and shows.name!=NEW.show_name));	
+# 						-- select * from recommend;
+# 						delete from recommend where show_name = NEW.show_name;
 				   
-				   END;
+# 				   END;
 
-				''')
+# 				''')
 
-	conn.commit()
-	conn.close()	
+# 	conn.commit()
+# 	conn.close()	
 
 # create_trigger_rec_mov()
 # create_trigger_rec_sho()
