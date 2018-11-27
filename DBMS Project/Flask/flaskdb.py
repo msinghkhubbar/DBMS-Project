@@ -143,10 +143,6 @@ def hotstar():
 
 		data1 = select_movies_all_cri_hotstar(Genre1,Director1,Actor1,Year1)
 		data2 = select_shows_all_cri_hotstar(Genre1,Director1,Actor1,Year1)
-		for i in data1:
-			movie_result.append(i)
-		for i in data2:
-			show_result.append(i)
 	return render_template('hotstar.html',data1 = data1, data2 = data2, logged_user=logged_user)
 
 
@@ -218,6 +214,7 @@ def watchlist():
 	data3=()
 	if (request.method == 'POST'):
 		idd = request.form['2']
+		print(idd)
 		watchlist_submit(logged_user,idd)           
 		rec_submit(idd)                                         #error not detected,shouldnt display in case of an integrity error,just flash a message
 		data1,data2 = watchlist_display(logged_user)
