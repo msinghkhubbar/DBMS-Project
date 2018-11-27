@@ -3,14 +3,40 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700,700i,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave" rel="stylesheet">
+    <style type="text/css">
+      body{
+        background-color: #E0EEEE;
+        font-family: 'Montserrat', sans-serif;
+      }
+      p{
+        font-family: 'Josefin Sans', sans-serif;
+        font-size: 18px;
+      }
+      #nav-font{
+        font-family: 'Josefin Sans', sans-serif;
+        font-size: 25px;
+        background-color: #3a4660;
+      }
+      table{
+        font-family: 'Exo 2', sans-serif;
+        font-size: 20px;
+      }
+      label{
+        font-family: 'Montserrat', sans-serif;
+      }
+    </style>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
   </head>
   <body>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+      <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="nav-font">
         <div class="container">
-          <a class="navbar-brand" href="#">Let's Binge</a>
+          <a class="navbar-brand" style="font-family: Sedgwick Ave" href="#">Let's Binge</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
           </button>
@@ -20,28 +46,25 @@
                   <li class="nav-item active">
                     <a class="nav-link" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
                   </li>
-                  <li class="nav-item">
+                  <li class="nav-item active">
                     <a class="nav-link" href="{{ url_for('watchlistDisplay') }}">Watchlist</a>
                   </li>
-                  <li class="nav-item dropdown">
+                  <li class="nav-item dropdown active">
                       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Service
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" target="_blank" href="{{ url_for('netflix') }}">Netflix</a>
-                        <a class="dropdown-item" target="_blank" href="{{ url_for('amazon') }}">Amazon Prime Video</a>
-                        <a class="dropdown-item" target="_blank" href="{{ url_for('hotstar') }}">Hotstar</a>
+                        <a class="dropdown-item" href="{{ url_for('netflix') }}">Netflix</a>
+                        <a class="dropdown-item" href="{{ url_for('amazon') }}">Amazon Prime Video</a>
+                        <a class="dropdown-item" href="{{ url_for('hotstar') }}">Hotstar</a>
                     </div>
                   </li>
-                 <!--  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('recommend') }}">Recommendation</a>
-                  </li> -->
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                <li class="nav-item">
+                <li class="nav-item active">
                   <a class="nav-link" href="#">{{ logged_user }}</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                   <a class="nav-link" href="{{ url_for('login') }}">Sign-Out</a>
                 </li>
               </ul>

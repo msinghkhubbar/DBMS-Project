@@ -4,6 +4,7 @@
 
 {% block content %}
 	<div class="container">
+		<h1>AMAZON</h1>
 		<a href="{{ url_for('amazon_name') }}">Search by name</a>
 		<form class="form" action="/amazon" method="POST">
 			<div class="form-group mx-sm-3 mb-2">
@@ -92,7 +93,7 @@
 					<td>{{ item[4] }}</td>
 					<td>{{ item[13] }}</td>
 					<td>{{ item[5] }}</td>
-					<td>{{  item[6] }}</td>
+					<td>{{ item[6] }}</td>
 					<td>{{ item[7] }}</td>
 					<td>{{ item[8] }}</td>
 					<td>{{ item[14] }}</td>

@@ -3,7 +3,11 @@
 {% block content %}
 	<div>
 		<h1>WATCHLIST</h1>
-		<table>
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<th>NAME</th>
+				<th>GENRE</th>
+			</thead>
 			{% for item in data1 %} 
 				<tr>
 					<td>{{ item[0] }}</td>
@@ -19,11 +23,9 @@
 			{% endfor %}
 		</table>
 	</div>
-
-
-    <div>
+ 	<div>
 		<h1>RECOMMENDATION BASED ON YOUR LATEST PICK</h1>
-			<table>
+			<table class="table table-striped">
 				{% for item in data3 %} 
 					<tr>
 						<td>{{ item[0] }}</td>
